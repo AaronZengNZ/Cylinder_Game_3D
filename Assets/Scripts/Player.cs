@@ -20,27 +20,25 @@ public class Player : MonoBehaviour
     public bool moving = false;
     public bool movingActive = false;
     public float rotationSpeed = 10f;
-    public float mousePosInWorldAngle;
+    public Vector3 mousePosInWorld;
     [Header("Cylinder")]
     public GameObject cylinder;
     public Vector3 cylinderRotationalOffset;
     // other
     private float prevYrotation = 0f;
-    private float accuracyImprover = 0f;
+    private float accelerationValue = 0f;
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
-    {
+    void Update(){
         CheckForToggleMovement(); 
         GetVariables();
+        GunCalculations();
         Movement();
         Rotate();  
-        GunCalculations();
     }
 
     private void GunCalculations(){
@@ -55,30 +53,29 @@ public class Player : MonoBehaviour
     }
 
     private void Shoot(){
+        if(movingActive == true){return;  }
         GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
         BulletScript bulletScript = bullet.GetComponent<BulletScript>();
         bulletScript.yDirection = prevYrotation;
         bulletScript.damage = bulletDamage;
         bulletScript.speed = bulletSpeed;
         cooldown = (1f / firerate);
-        if(movingActive == true){
-            bulletScript.yDirection = Mathf.Sin(Time.time * 5f) * 360f;
-            cooldown = (2f / firerate);
-        }
     }
 
     private void GetVariables(){
-        //find angle from center of screen to mouse on screen
-        Vector2 mousePos = Input.mousePosition;
-        Vector2 screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
-        //calculate compass angle from center of screen to mouse on screen
-        mousePosInWorldAngle = 360 - CalculateAngle(screenCenter, mousePos) - 45f;
+        //get mouse pos in world with ground layermask raycast
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit, 1000, LayerMask.GetMask("Ground"))){
+            mousePosInWorld = hit.point;
+        }
+        cursorLocation.position = mousePosInWorld;
     }
 
     private void Movement(){
         if(movingActive){
             if(moving){
-                rb.velocity = transform.forward * speed * (1 + accuracyImprover * 0.5f);
+                rb.velocity = -transform.forward * speed * (1 + accelerationValue * 0.5f);
             }
             else{
                 rb.velocity = Vector3.zero;
@@ -90,10 +87,13 @@ public class Player : MonoBehaviour
     }
     private void Rotate(){
         //rotate cylinders x rotation to look at mouse ONLY. keep all other rotations the same
-        if(movingActive == false){accuracyImprover = 0;}
+        float tempRotSpeed = rotationSpeed;
+        if(movingActive == false){accelerationValue = 0;}
         prevYrotation = transform.eulerAngles.y;
-        float newYrotation = mousePosInWorldAngle;
-        prevYrotation = ChangeTowardsValue(prevYrotation, newYrotation, rotationSpeed);
+        //point transform at lookpos
+        transform.LookAt(new Vector3(mousePosInWorld.x, transform.position.y, mousePosInWorld.z));
+        float newYrotation = transform.eulerAngles.y;
+        prevYrotation = ChangeTowardsValue(prevYrotation, newYrotation, tempRotSpeed);
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, prevYrotation, transform.eulerAngles.z);
     }
 
@@ -106,44 +106,16 @@ public class Player : MonoBehaviour
     }
 
     private float ChangeTowardsValue(float value1, float value2, float changeSpeed){
-        string direction = "right";
-        //accuracy improver
-        accuracyImprover += 0.2f * Time.deltaTime;
-        if(accuracyImprover > 1f){
-            accuracyImprover = 1f;
-        }
-        float difference = Mathf.Abs(value1 - value2 - 180);
-        if(difference > 180){
-            difference -= 360;
-            difference = Mathf.Abs(difference);
-        }
-        UnityEngine.Debug.Log(difference);
-        if(movingActive == false || difference <= Time.deltaTime * changeSpeed * (1+accuracyImprover)){
-            value1 = value2;
-        }
-        else if(value1 < value2){
-            value1 += 360;
-            if(value1 - value2 < 180){
-                value1 += changeSpeed * Time.deltaTime - 360;
-            }
-            else{
-                value1 -= changeSpeed * Time.deltaTime - 360;
-            }
-        }
-        else if(value2 < value1){
-            value2 += 360;
-            if(value2 - value1 < 180){
-                value1 -= changeSpeed * Time.deltaTime;
-            }
-            else{
-                value1 += changeSpeed * Time.deltaTime;
-            }
-        }
+        //lerp the values
+        value1 = Mathf.LerpAngle(value1, (value2 - 180), changeSpeed * Time.deltaTime);
         return value1;
     }
 
     private void CheckForToggleMovement(){
-        //space or right click
+        accelerationValue += 0.2f * Time.deltaTime;
+        if(accelerationValue > 1){
+            accelerationValue = 1;
+        }
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1)){
             moving = !moving;
         }
