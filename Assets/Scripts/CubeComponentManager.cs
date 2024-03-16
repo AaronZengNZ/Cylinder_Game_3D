@@ -12,17 +12,17 @@ public class CubeComponentManager : MonoBehaviour
     public Transform player;
     public Material passiveMaterial;
     public Material offensiveMaterial;
-    private Rigidbody[] rbs;
-    private EnemyCreator[] enemyCreators;
-    private Transform[] targets;
-    private MeshRenderer[] meshRenderers;
-    private Vector3[] randomChaseOffsets;
+    private Rigidbody[] rbs = new Rigidbody[10000];
+    private EnemyCreator[] enemyCreators = new EnemyCreator[10000];
+    private Transform[] targets = new Transform[10000];
+    private MeshRenderer[] meshRenderers = new MeshRenderer[10000];
+    private Vector3[] randomChaseOffsets = new Vector3[10000];
     [Header("Stats")]
     public float maxDistanceToSee = 50f;
     public float baseSpeed = 10f;
-    private float[] speeds;
+    private float[] speeds = new float[10000];
     public float damage = 10f;
-    private bool[] slotFilleds;
+    private bool[] slotFilleds = new bool[10000];
     public float randomOffset = 0.5f;
     void Start(){
         FindCubes();
@@ -30,6 +30,7 @@ public class CubeComponentManager : MonoBehaviour
     }
 
     void Update(){
+        FindCubes();
         for(int i = 0; i < cubeComponents.Length; i++){
             if(cubeComponents[i] != null){
                 RunSimulatedUpdateOfIndex(i + 1);
@@ -42,6 +43,7 @@ public class CubeComponentManager : MonoBehaviour
         CalculateAndRunMovementOfComponent(realIndex);
         SetActivationOfMeshRendererBasedOnVisible(realIndex);
         SetVariablesOfComponentScript(realIndex);
+        SetMaterialOfMeshRendererBasedOnTarget(realIndex);
     }
 
     private void SetVariablesOfComponentScript(int index){
@@ -89,6 +91,15 @@ public class CubeComponentManager : MonoBehaviour
         }
     }
 
+    private void SetMaterialOfMeshRendererBasedOnTarget(int index){
+        if(targets[index] == null){
+            meshRenderers[index].material = offensiveMaterial;
+        }
+        else{
+            meshRenderers[index].material = passiveMaterial;
+        }
+    }
+    
     private void SetActivationOfMeshRendererBasedOnVisible(int index){
         if(Mathf.Abs(cubeComponents[index].transform.position.x) > maxDistanceToSee || Mathf.Abs(cubeComponents[index].transform.position.z) > maxDistanceToSee){
             meshRenderers[index].enabled = false;

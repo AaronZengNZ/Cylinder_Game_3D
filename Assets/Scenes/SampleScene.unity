@@ -3231,11 +3231,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cubeComponents: []
-  player: {fileID: 0}
-  passiveMaterial: {fileID: 0}
-  offensiveMaterial: {fileID: 0}
-  maxDistanceToSee: 50
-  baseSpeed: 10
+  player: {fileID: 798889372}
+  passiveMaterial: {fileID: 2100000, guid: 163bbe6664f6b4563bb20ef6c37c2438, type: 2}
+  offensiveMaterial: {fileID: 2100000, guid: fbbbb6a6fb7d7454bbb18cf7885dfa82, type: 2}
+  maxDistanceToSee: 25
+  baseSpeed: 3
   damage: 10
   randomOffset: 3
 --- !u!1 &746139792
@@ -4968,8 +4968,8 @@ MonoBehaviour:
   xSpawnDistance: 20
   zSpawnDistance: 20
   ySpawnHeight: 0.65
-  spawnRate: 4
-  spawnRateWhenEmptySlots: 16
+  spawnRate: 16
+  spawnRateWhenEmptySlots: 64
   cube: {fileID: 7639808211333211954, guid: 43cb368fdb7d64177a2fea5decd6405c, type: 3}
 --- !u!1 &1163534776
 GameObject:

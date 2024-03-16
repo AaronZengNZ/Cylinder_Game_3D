@@ -31,8 +31,11 @@ public class CubeComponent : MonoBehaviour
     }
 
     private void Die(){
-        cubeComponentManager.ComponentDestroyed(index);
         Instantiate(deathParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);
+    }
+
+    private void OnDestroy(){
+        cubeComponentManager.ComponentDestroyed(index);
     }
 }

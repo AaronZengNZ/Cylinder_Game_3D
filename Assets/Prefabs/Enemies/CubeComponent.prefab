@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1294699674279769426}
   m_Layer: 9
   m_Name: CubeComponent
-  m_TagString: Untagged
+  m_TagString: CubeComponent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,21 +98,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77caec1d9dda34f078a67b40fca90e5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 0}
-  enemyCreator: {fileID: 0}
-  target: {fileID: 0}
-  player: {fileID: 0}
-  passiveMaterial: {fileID: 2100000, guid: 163bbe6664f6b4563bb20ef6c37c2438, type: 2}
-  offensiveMaterial: {fileID: 2100000, guid: fbbbb6a6fb7d7454bbb18cf7885dfa82, type: 2}
-  meshRenderer: {fileID: 0}
-  deathParticles: {fileID: 1481150905211913128, guid: cb4d96827eb2a4cba9682a768057b217, type: 3}
-  maxCubesActive: 100
-  maxDistanceToSee: 25
-  speed: 3
-  damage: 10
+  cubeComponentManager: {fileID: 0}
   maxHp: 5
-  slotFilled: 0
-  randomOffset: 7
+  deathParticles: {fileID: 1481150905211913128, guid: cb4d96827eb2a4cba9682a768057b217, type: 3}
+  hasTarget: 0
+  index: 0
 --- !u!54 &909012403481237004
 Rigidbody:
   m_ObjectHideFlags: 0
