@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
 {
     [Header("Animation")]
     public Animator anim;
+    public GameObject deathParticles;
     [Header("Movement")]
     public Rigidbody rb;
     public float moveSpeed = 5f;
@@ -106,6 +107,7 @@ public class Enemy : MonoBehaviour
     }
 
     public void DieAndDestroy(){
+        Instantiate(deathParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 }

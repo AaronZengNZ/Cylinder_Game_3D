@@ -11,6 +11,7 @@ public class CubeSpawner : MonoBehaviour
     public float zSpawnDistance = 10f;
     public float ySpawnHeight = 0.65f;
     public float spawnRate = 2f;
+    public float spawnRateWhenEmptySlots = 4f;
     public GameObject cube;
     // Start is called before the first frame update
     void Start()
@@ -22,8 +23,24 @@ public class CubeSpawner : MonoBehaviour
     IEnumerator SpawnEnemies(){
         while(true){
             SpawnEnemy();
-            yield return new WaitForSeconds(1f / spawnRate);
+            if(CheckAllEnemyCreatorsForEmptySlots()){
+                yield return new WaitForSeconds(1f / spawnRateWhenEmptySlots);
+            }
+            else{
+                yield return new WaitForSeconds(1f / spawnRate);
+            }
         }
+    }
+
+    private bool CheckAllEnemyCreatorsForEmptySlots(){
+        GameObject[] enemyCreators = GameObject.FindGameObjectsWithTag("EnemyCreator");
+        foreach(GameObject enemyCreator in enemyCreators){
+            EnemyCreator enemyCreatorScript = enemyCreator.GetComponent<EnemyCreator>();
+            if(enemyCreatorScript.slotsTakenUp < enemyCreatorScript.slotsToInstantiate){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void SpawnEnemy(){

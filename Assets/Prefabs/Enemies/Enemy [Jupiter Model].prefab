@@ -120,6 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 0}
+  deathParticles: {fileID: 1481150905211913128, guid: 4d1f374d648d246cc9496ab208d79e60, type: 3}
   rb: {fileID: 0}
   moveSpeed: 3
   activationTime: 1.75

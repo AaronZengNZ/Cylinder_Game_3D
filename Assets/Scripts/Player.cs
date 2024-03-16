@@ -14,6 +14,12 @@ public class Player : MonoBehaviour
     public float bulletDamage = 10f;
     public float bulletSpeed = 10f;
     public bool canShoot = true;
+    public string offsetType = "sin";
+    public float gunScreenShake = 1f;
+    public float gunScreenShakeTime = 0.05f;
+    public float gunOffsetAngle = 0f;
+    public float gunOffsetSpeed = 2f;
+    public float gunOffsetQuantity = 10f;
     private float cooldown = 0f;
     [Header("Movement")]
     public float speed = 5.0f;
@@ -27,6 +33,7 @@ public class Player : MonoBehaviour
     // other
     private float prevYrotation = 0f;
     private float accelerationValue = 0f;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -34,11 +41,27 @@ public class Player : MonoBehaviour
     }
 
     void Update(){
+        CalculateOffsetAngle();
         CheckForToggleMovement(); 
         GetVariables();
         GunCalculations();
         Movement();
         Rotate();  
+    }
+
+    private void CalculateOffsetAngle(){
+        if(offsetType == "sin"){
+            gunOffsetAngle = Mathf.Sin(Time.time * gunOffsetSpeed) * gunOffsetQuantity;
+        }
+        else if(offsetType == "cos"){
+            gunOffsetAngle = Mathf.Cos(Time.time * gunOffsetSpeed) * gunOffsetQuantity;
+        }
+        else if(offsetType == "natural"){
+            gunOffsetAngle = 0f;
+        }
+        else{
+            Debug.LogError("Invalid offset type");
+        }
     }
 
     private void GunCalculations(){
@@ -54,9 +77,10 @@ public class Player : MonoBehaviour
 
     private void Shoot(){
         if(movingActive == true){return;  }
+        CinemachineShake.Instance.ShakeCamera(gunScreenShake, gunScreenShakeTime);
         GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
         BulletScript bulletScript = bullet.GetComponent<BulletScript>();
-        bulletScript.yDirection = prevYrotation;
+        bulletScript.yDirection = prevYrotation + gunOffsetAngle;
         bulletScript.damage = bulletDamage;
         bulletScript.speed = bulletSpeed;
         cooldown = (1f / firerate);
@@ -75,7 +99,15 @@ public class Player : MonoBehaviour
     private void Movement(){
         if(movingActive){
             if(moving){
-                rb.velocity = -transform.forward * speed * (1 + accelerationValue * 0.5f);
+                UnityEngine.Debug.Log(transform.forward);
+                //instead of using transform.forward, use prevYrotation
+                Vector3 moveDirection = new Vector3(Mathf.Sin(prevYrotation * Mathf.Deg2Rad), 0, Mathf.Cos(prevYrotation * Mathf.Deg2Rad));
+                rb.velocity = -moveDirection * speed * (1 + accelerationValue*0.5f);
+                
+                //if close enough to mouse
+                if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f){
+                    moving = false;
+                }
             }
             else{
                 rb.velocity = Vector3.zero;
@@ -131,5 +163,11 @@ public class Player : MonoBehaviour
     }
     public void ToggleCanShoot(){
         canShoot = !canShoot;
+    }
+
+    private float GetVector2Distance(Vector3 v1, Vector3 v2)
+    {
+        //get distance between x and z
+        return Vector2.Distance(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z));
     }
 }
