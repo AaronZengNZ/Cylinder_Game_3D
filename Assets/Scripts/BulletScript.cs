@@ -9,6 +9,7 @@ public class BulletScript : MonoBehaviour
     public float damage = 10f;
     public float lifetime = 5f;
     public float yDirection = 0f;
+    public float pierce = 1f;
     private float livedTime = 0f;
     // Start is called before the first frame update
     void Start()
@@ -24,7 +25,10 @@ public class BulletScript : MonoBehaviour
     }
 
     public void HitEnemy(){
-        Destroy(gameObject);
+        pierce -= 1f;
+        if(pierce <= 1f){
+            Destroy(gameObject);
+        }
     }
 
     private void DestroyCalculations(){

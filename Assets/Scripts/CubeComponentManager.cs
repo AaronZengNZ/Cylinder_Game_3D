@@ -89,6 +89,8 @@ public class CubeComponentManager : MonoBehaviour
         if(ReturnDistanceBetweenVector2Comparison(cubeComponents[index].transform.position, randomChaseOffsets[index]) < 0.05f){
             FindChaseOffsetForComponent(index);
         }
+        FindEnemyCreatorForComponent(index);
+        FindTargetForComponent(index);
     }
 
     private void SetMaterialOfMeshRendererBasedOnTarget(int index){
@@ -194,7 +196,13 @@ public class CubeComponentManager : MonoBehaviour
     }
 
     private void FindTargetForComponent(int index){
-        Transform slot = enemyCreators[index].getSlot(cubeComponents[index]);
+        Transform slot;
+        if(enemyCreators[index] == null){
+            slot = null;
+        }
+        else{
+            slot = enemyCreators[index].getSlot(cubeComponents[index]);
+        }
         if(slot != null){
             targets[index] = slot;
         }
@@ -210,12 +218,17 @@ public class CubeComponentManager : MonoBehaviour
         for(int i = 0; i < tempEnemyCreators.Length; i++){
             float distance = 
                 ReturnDistanceBetweenVector2Comparison(tempEnemyCreators[i].transform.position, cubeComponents[index].transform.position);
-            if(distance < closestDistance){
+            if(distance < closestDistance && tempEnemyCreators[i].slotsTakenUp < tempEnemyCreators[i].slotsToInstantiate){
                 closestDistance = distance;
                 closestEnemyCreator = tempEnemyCreators[i];
             }
         }
-        enemyCreators[index] = closestEnemyCreator;
+        if(closestDistance == Mathf.Infinity){
+            enemyCreators[index] = null;
+        }
+        else{
+            enemyCreators[index] = closestEnemyCreator;
+        }
     }
     
     private void FindRigidbodyForComponent(int index){

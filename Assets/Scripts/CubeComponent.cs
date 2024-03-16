@@ -36,6 +36,8 @@ public class CubeComponent : MonoBehaviour
     }
 
     private void OnDestroy(){
-        cubeComponentManager.ComponentDestroyed(index);
+        if(cubeComponentManager != null){
+            cubeComponentManager.ComponentDestroyed(index);
+        }
     }
 }

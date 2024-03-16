@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     public float gunOffsetSpeed = 2f;
     public float gunOffsetQuantity = 10f;
     private float cooldown = 0f;
+    public float pierce = 1f;
     [Header("Movement")]
     public float speed = 5.0f;
     public bool moving = false;
@@ -83,6 +84,7 @@ public class Player : MonoBehaviour
         bulletScript.yDirection = prevYrotation + gunOffsetAngle;
         bulletScript.damage = bulletDamage;
         bulletScript.speed = bulletSpeed;
+        bulletScript.pierce = pierce;
         cooldown = (1f / firerate);
     }
 

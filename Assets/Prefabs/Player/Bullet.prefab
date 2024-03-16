@@ -101,8 +101,9 @@ MonoBehaviour:
   rb: {fileID: -5988729851285249675}
   speed: 10
   damage: 10
-  lifetime: 5
+  lifetime: 1
   yDirection: 0
+  pierce: 1
 --- !u!54 &-5988729851285249675
 Rigidbody:
   m_ObjectHideFlags: 0

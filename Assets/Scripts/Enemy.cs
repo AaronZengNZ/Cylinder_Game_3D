@@ -52,6 +52,7 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damage){
         if(dead || !activated){return;}
+        float damageOverflow = damage-currentBlockHitpoints;
         currentBlockHitpoints -= damage;
         if(currentBlockHitpoints <= 0){
             blocksRemaining--;
@@ -61,6 +62,7 @@ public class Enemy : MonoBehaviour
             }
             else{
                 currentBlockHitpoints = hitpointsPerBlock;
+                TakeDamage(damageOverflow);
             }
         }
         ScaleBlockSizes();
@@ -92,6 +94,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //also make a script to assist with movement (reduce lag)
         Movement();
     }
 
