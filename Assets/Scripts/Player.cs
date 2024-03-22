@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public Transform cursorLocation;
     public Animator anim;
     public GameObject bulletPrefab;
+    public UiTextManager uiTextManager;
     [Header("Gun")]
     public float firerate = 2f;
     public float bulletDamage = 10f;
@@ -20,8 +21,10 @@ public class Player : MonoBehaviour
     public float gunOffsetAngle = 0f;
     public float gunOffsetSpeed = 2f;
     public float gunOffsetQuantity = 10f;
+    public float bulletMass = 1f;
     private float cooldown = 0f;
     public float pierce = 1f;
+    private float timeSinceLastFire = 0f;
     [Header("Movement")]
     public float speed = 5.0f;
     public bool moving = false;
@@ -38,7 +41,9 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
+        uiTextManager = GameObject.Find("UITextManager").GetComponent<UiTextManager>();
     }
 
     void Update(){
@@ -48,6 +53,11 @@ public class Player : MonoBehaviour
         GunCalculations();
         Movement();
         Rotate();  
+        UpdateUITextManagerVariables();
+    }
+
+    private void UpdateUITextManagerVariables(){
+        uiTextManager.GunUpdateVariableTool(timeSinceLastFire, bulletSpeed, bulletDamage, bulletMass, firerate);
     }
 
     private void CalculateOffsetAngle(){
@@ -67,6 +77,7 @@ public class Player : MonoBehaviour
 
     private void GunCalculations(){
         if(canShoot){
+            timeSinceLastFire += Time.deltaTime;
             if(Input.GetMouseButton(0) && cooldown <= 0f){
                 Shoot();
             }
@@ -77,7 +88,8 @@ public class Player : MonoBehaviour
     }
 
     private void Shoot(){
-        if(movingActive == true){return;  }
+        if(movingActive == true){return;}
+        timeSinceLastFire = 0f;
         CinemachineShake.Instance.ShakeCamera(gunScreenShake, gunScreenShakeTime);
         GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
         BulletScript bulletScript = bullet.GetComponent<BulletScript>();
@@ -85,7 +97,7 @@ public class Player : MonoBehaviour
         bulletScript.damage = bulletDamage;
         bulletScript.speed = bulletSpeed;
         bulletScript.pierce = pierce;
-        cooldown = (1f / firerate);
+        cooldown += (1f / firerate);
     }
 
     private void GetVariables(){
@@ -101,7 +113,6 @@ public class Player : MonoBehaviour
     private void Movement(){
         if(movingActive){
             if(moving){
-                UnityEngine.Debug.Log(transform.forward);
                 //instead of using transform.forward, use prevYrotation
                 Vector3 moveDirection = new Vector3(Mathf.Sin(prevYrotation * Mathf.Deg2Rad), 0, Mathf.Cos(prevYrotation * Mathf.Deg2Rad));
                 rb.velocity = -moveDirection * speed * (1 + accelerationValue*0.5f);
@@ -123,11 +134,11 @@ public class Player : MonoBehaviour
         //rotate cylinders x rotation to look at mouse ONLY. keep all other rotations the same
         float tempRotSpeed = rotationSpeed;
         if(movingActive == false){accelerationValue = 0;}
-        prevYrotation = transform.eulerAngles.y;
         //point transform at lookpos
         transform.LookAt(new Vector3(mousePosInWorld.x, transform.position.y, mousePosInWorld.z));
-        float newYrotation = transform.eulerAngles.y;
-        prevYrotation = ChangeTowardsValue(prevYrotation, newYrotation, tempRotSpeed);
+        prevYrotation = transform.eulerAngles.y - 180;
+        //float newYrotation = transform.eulerAngles.y;
+        //prevYrotation = ChangeTowardsValue(prevYrotation, newYrotation, tempRotSpeed);
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, prevYrotation, transform.eulerAngles.z);
     }
 
@@ -141,7 +152,7 @@ public class Player : MonoBehaviour
 
     private float ChangeTowardsValue(float value1, float value2, float changeSpeed){
         //lerp the values
-        value1 = Mathf.LerpAngle(value1, (value2 - 180), changeSpeed * Time.deltaTime);
+        value1 = value2 - 180;
         return value1;
     }
 

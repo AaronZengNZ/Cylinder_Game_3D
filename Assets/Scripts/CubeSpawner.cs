@@ -14,6 +14,7 @@ public class CubeSpawner : MonoBehaviour
     public float spawnRateWhenEmptySlots = 4f;
     public float maxCubes = 200f;
     public GameObject cube;
+    float timeElapsed = 0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,15 +24,30 @@ public class CubeSpawner : MonoBehaviour
 
     IEnumerator SpawnEnemies(){
         while(true){
-            if(GameObject.FindObjectsOfType<CubeComponent>().Length < maxCubes){
-                SpawnEnemy();
-            }
+            float tempSpawnRate;
             if(CheckAllEnemyCreatorsForEmptySlots()){
-                yield return new WaitForSeconds(1f / spawnRateWhenEmptySlots);
+                Debug.Log("Found Empty Spawner");
+                tempSpawnRate = 1f / spawnRateWhenEmptySlots;
             }
             else{
-                yield return new WaitForSeconds(1f / spawnRate);
+                Debug.Log("Did Not Find Empty Spawner");
+                if(spawnRate == 0f){
+                    timeElapsed = 0f;
+                    tempSpawnRate = 1f;
+                }
+                else{
+                    tempSpawnRate = 1f / spawnRate;
+                }
             }
+            if(timeElapsed >= tempSpawnRate){
+                timeElapsed -= tempSpawnRate;
+                if(GameObject.FindObjectsOfType<CubeComponent>().Length < maxCubes){
+                    Debug.Log("Spawning Enemy");
+                    SpawnEnemy();
+                }
+            }
+            yield return new WaitForSeconds(0.05f);
+            timeElapsed += 0.05f;
         }
     }
 
@@ -55,25 +71,27 @@ public class CubeSpawner : MonoBehaviour
         if(Random.Range(0, 2) >= 1){
             spawnDirection = "negative";
         }
-        float xAxis = playerTransform.position.x;
-        float zAxis = playerTransform.position.z;
+        float zAxis = 0f;
+        float xAxis = 0f;
         float yAxis = ySpawnHeight;
         if(spawnAxis == "x"){
-            xAxis += Random.Range(-1,1)*xSpawnDistance;
+            xAxis += Random.Range(-1f,1f) * xSpawnDistance;
+            Debug.Log(xAxis);
             if(spawnDirection == "positive"){
-                zAxis += zSpawnDistance;
+                zAxis = zSpawnDistance;
             }
             else{
-                zAxis -= zSpawnDistance;
+                zAxis = -zSpawnDistance;
             }
         }
         else if(spawnAxis == "z"){
-            zAxis += Random.Range(-1,1)*zSpawnDistance;
+            zAxis += Random.Range(-1f,1f)*zSpawnDistance;
+            Debug.Log(zAxis);
             if(spawnDirection == "positive"){
-                xAxis += xSpawnDistance;
+                xAxis = xSpawnDistance;
             }
             else{
-                xAxis -= xSpawnDistance;
+                xAxis = -xSpawnDistance;
             }
         }
         Vector3 spawnLocation = new Vector3(xAxis, yAxis, zAxis);

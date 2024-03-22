@@ -10,6 +10,11 @@ public class CubeComponent : MonoBehaviour
     float hp = 10f;
     public bool hasTarget = false;
     public float index = 0;
+
+    void Start(){
+        //disable mesh renderer
+        GetComponent<MeshRenderer>().enabled = false;
+    }
     public void HitByBullet(float damage)
     {
         TakeDamage(damage);

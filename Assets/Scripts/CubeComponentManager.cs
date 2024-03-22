@@ -27,6 +27,7 @@ public class CubeComponentManager : MonoBehaviour
     public float maxObjectsUpdatedPerSecond = 1000;
     public float objectsUpdated = 0;
     public float chaseDeactivationDistance = 0.5f;
+    float cubeComponentsThatExist;
     void Start(){
         FindCubes();
         SetStartingVariablesOfComponents();
@@ -36,13 +37,14 @@ public class CubeComponentManager : MonoBehaviour
         FindCubes();
         float tempObjectsUpdated = objectsUpdated;
         float tempAmountOfObjectsToUpdate = maxObjectsUpdatedPerSecond * Time.deltaTime;
-        chaseDeactivationDistance = 2000f / maxObjectsUpdatedPerSecond;
-        float cubeComponentsThatExist = 0f;
+        cubeComponentsThatExist = 0f;
         for(int i = 0; i < cubeComponents.Length; i++){
             if(cubeComponents[i] != null){
                 cubeComponentsThatExist = i;
             }
         }
+        float timeToUpdateSingleComponent = cubeComponentsThatExist / maxObjectsUpdatedPerSecond;
+        chaseDeactivationDistance = timeToUpdateSingleComponent * 5f;
         for(int i = 0; i < cubeComponentsThatExist; i++){
             if(i >= objectsUpdated && i < objectsUpdated + tempAmountOfObjectsToUpdate){
                 if(cubeComponents[i] != null){

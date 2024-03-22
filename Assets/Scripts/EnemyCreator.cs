@@ -60,8 +60,6 @@ public class EnemyCreator : MonoBehaviour
                 Destroy(childObjects[i]);
                 childObjects[i] = null;
             }
-            slotsTakenUp = 0f;
-            slotsFilled = 0f;
             StartCoroutine(UnInstantiate());
             GameObject newEnemy = Instantiate(enemyToInstantiate, transform.position, transform.rotation);
         }
@@ -69,6 +67,8 @@ public class EnemyCreator : MonoBehaviour
 
     IEnumerator UnInstantiate(){
         yield return new WaitForSeconds(1.5f);
+        slotsTakenUp = 0f;
+        slotsFilled = 0f;
         instantiating = false;
     }
 
