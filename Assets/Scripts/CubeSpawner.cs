@@ -12,6 +12,7 @@ public class CubeSpawner : MonoBehaviour
     public float ySpawnHeight = 0.65f;
     public float spawnRate = 2f;
     public float spawnRateWhenEmptySlots = 4f;
+    public float maxCubes = 200f;
     public GameObject cube;
     // Start is called before the first frame update
     void Start()
@@ -22,7 +23,9 @@ public class CubeSpawner : MonoBehaviour
 
     IEnumerator SpawnEnemies(){
         while(true){
-            SpawnEnemy();
+            if(GameObject.FindObjectsOfType<CubeComponent>().Length < maxCubes){
+                SpawnEnemy();
+            }
             if(CheckAllEnemyCreatorsForEmptySlots()){
                 yield return new WaitForSeconds(1f / spawnRateWhenEmptySlots);
             }

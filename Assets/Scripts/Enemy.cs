@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     public float moveSpeed = 5f;
     public float activationTime = 1f;
     public GameObject player;
-    private bool activated = false;
+    public bool activated = false;
     [Header("Hitpoints")]
     public Transform[] blocks;
     public float hitpointsPerBlock = 10f;
@@ -22,8 +22,13 @@ public class Enemy : MonoBehaviour
     public Transform[] secondaryBlockObjects;
     public float[] blockObjectHideThresholds;
 
+    [Header("UpdateAssistors")]
+    public float index = 0f;
+    public string movementType = "chase";
+    public EnemyUpdateManager enemyUpdateManager;
+
     // OTHER
-    private bool dead = false;
+    public bool dead = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,22 +37,22 @@ public class Enemy : MonoBehaviour
         anim = GetComponent<Animator>();
         blocksRemaining = blocks.Length;
         currentBlockHitpoints = hitpointsPerBlock;
+        enemyUpdateManager = GameObject.Find("EnemyUpdateManager").GetComponent<EnemyUpdateManager>();
+        enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index);
         StartCoroutine(Activate());
     }
 
     IEnumerator Activate(){
         activated = false;
+        enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index);
         yield return new WaitForSeconds(activationTime);
         activated = true;
+        enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index);
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void HitByBullet(float damage)
     {
-        if(other.gameObject.tag == "PlayerBullet"){
-            BulletScript bulletScript = other.gameObject.GetComponent<BulletScript>();
-            TakeDamage(bulletScript.damage);
-            bulletScript.HitEnemy();
-        }
+        TakeDamage(damage);
     }
 
     public void TakeDamage(float damage){
@@ -58,6 +63,7 @@ public class Enemy : MonoBehaviour
             blocksRemaining--;
             if(blocksRemaining <= 0){
                 dead = true;
+                enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index);
                 anim.SetTrigger("Dead");
             }
             else{
@@ -92,24 +98,25 @@ public class Enemy : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        //also make a script to assist with movement (reduce lag)
-        Movement();
-    }
+    // void Update()
+    // {
+    //     //also make a script to assist with movement (reduce lag)
+    //     Movement();
+    // }
 
-    private void Movement(){
-        if(dead){
-            rb.velocity = Vector3.zero;
-            return;
-        }
-        if(activated){
-            Vector3 direction = player.transform.position - transform.position;
-            rb.velocity = direction.normalized * moveSpeed;
-        }
-    }
+    // private void Movement(){
+    //     if(dead){
+    //         rb.velocity = Vector3.zero;
+    //         return;
+    //     }
+    //     if(activated){
+    //         Vector3 direction = player.transform.position - transform.position;
+    //         rb.velocity = direction.normalized * moveSpeed;
+    //     }
+    // }
 
     public void DieAndDestroy(){
+        enemyUpdateManager.EnemyDestroyed(index);
         Instantiate(deathParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }

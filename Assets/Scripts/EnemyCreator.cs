@@ -41,7 +41,9 @@ public class EnemyCreator : MonoBehaviour
     }
 
     void Update(){
-        InstantiateEnemy();
+        if(slotsFilled >= slotsToInstantiate){        
+            InstantiateEnemy();
+        }
     }
 
     void OnTriggerEnter(Collider other){

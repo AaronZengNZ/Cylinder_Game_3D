@@ -47,4 +47,21 @@ public class BulletScript : MonoBehaviour
         }
         rb.velocity = transform.forward * speed;
     }
+
+    //use this to call enemy collide. i sleep now
+    private void OnTriggerEnter(Collider other){
+        CubeComponent cubeComponent = other.GetComponent<CubeComponent>();
+        Enemy enemy = other.GetComponent<Enemy>();
+        if(cubeComponent != null){
+            cubeComponent.HitByBullet(damage);
+            HitEnemy();
+        }
+        else if(enemy != null){
+            enemy.HitByBullet(damage);
+            HitEnemy();
+        }
+        else if(other.tag == "Wall"){
+            HitEnemy();
+        }
+    }
 }

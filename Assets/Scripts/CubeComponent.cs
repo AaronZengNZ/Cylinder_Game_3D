@@ -10,14 +10,9 @@ public class CubeComponent : MonoBehaviour
     float hp = 10f;
     public bool hasTarget = false;
     public float index = 0;
-    private void OnTriggerEnter(Collider other)
+    public void HitByBullet(float damage)
     {
-        if (other.gameObject.tag == "PlayerBullet" && hasTarget == false)
-        {
-            BulletScript bulletScript = other.gameObject.GetComponent<BulletScript>();
-            TakeDamage(bulletScript.damage);
-            bulletScript.HitEnemy();
-        }
+        TakeDamage(damage);
     }
 
     private void TakeDamage(float damage)

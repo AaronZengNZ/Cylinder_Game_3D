@@ -24,6 +24,9 @@ public class CubeComponentManager : MonoBehaviour
     public float damage = 10f;
     private bool[] slotFilleds = new bool[10000];
     public float randomOffset = 0.5f;
+    public float maxObjectsUpdatedPerSecond = 1000;
+    public float objectsUpdated = 0;
+    public float chaseDeactivationDistance = 0.5f;
     void Start(){
         FindCubes();
         SetStartingVariablesOfComponents();
@@ -31,10 +34,26 @@ public class CubeComponentManager : MonoBehaviour
 
     void Update(){
         FindCubes();
+        float tempObjectsUpdated = objectsUpdated;
+        float tempAmountOfObjectsToUpdate = maxObjectsUpdatedPerSecond * Time.deltaTime;
+        chaseDeactivationDistance = 2000f / maxObjectsUpdatedPerSecond;
+        float cubeComponentsThatExist = 0f;
         for(int i = 0; i < cubeComponents.Length; i++){
             if(cubeComponents[i] != null){
-                RunSimulatedUpdateOfIndex(i + 1);
+                cubeComponentsThatExist = i;
             }
+        }
+        for(int i = 0; i < cubeComponentsThatExist; i++){
+            if(i >= objectsUpdated && i < objectsUpdated + tempAmountOfObjectsToUpdate){
+                if(cubeComponents[i] != null){
+                    RunSimulatedUpdateOfIndex(i + 1);
+                }
+                tempObjectsUpdated++;
+            }
+        }
+        objectsUpdated = tempObjectsUpdated;
+        if(objectsUpdated >= cubeComponentsThatExist){
+            objectsUpdated = 0;
         }
     }
 
@@ -72,7 +91,7 @@ public class CubeComponentManager : MonoBehaviour
     private void ChaseEnemySuccess(int index){
         Vector3 direction = targets[index].position - cubeComponents[index].transform.position;
         rbs[index].velocity = direction.normalized * speeds[index];
-        if(ReturnDistanceBetweenVector2Comparison(cubeComponents[index].transform.position, targets[index].position) < 0.05f){
+        if(ReturnDistanceBetweenVector2Comparison(cubeComponents[index].transform.position, targets[index].position) < chaseDeactivationDistance){
             if(slotFilleds[index] == false){
                 enemyCreators[index].slotFilled();
                 slotFilleds[index] = true;
@@ -86,7 +105,7 @@ public class CubeComponentManager : MonoBehaviour
     private void ChasePlayerInsteadFallback(int index){
         Vector3 direction = randomChaseOffsets[index] - cubeComponents[index].transform.position;
         rbs[index].velocity = direction.normalized * speeds[index];
-        if(ReturnDistanceBetweenVector2Comparison(cubeComponents[index].transform.position, randomChaseOffsets[index]) < 0.05f){
+        if(ReturnDistanceBetweenVector2Comparison(cubeComponents[index].transform.position, randomChaseOffsets[index]) < chaseDeactivationDistance){
             FindChaseOffsetForComponent(index);
         }
         FindEnemyCreatorForComponent(index);
