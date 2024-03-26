@@ -10,32 +10,16 @@ public class Player : MonoBehaviour
     public Animator anim;
     public GameObject bulletPrefab;
     public UiTextManager uiTextManager;
-    [Header("Gun")]
-    public float firerate = 2f;
-    public float bulletDamage = 10f;
-    public float bulletSpeed = 10f;
-    public bool canShoot = true;
-    public string offsetType = "sin";
-    public float gunScreenShake = 1f;
-    public float gunScreenShakeTime = 0.05f;
-    public float gunOffsetAngle = 0f;
-    public float gunOffsetSpeed = 2f;
-    public float gunOffsetQuantity = 10f;
-    public float bulletMass = 1f;
-    private float cooldown = 0f;
-    public float pierce = 1f;
-    private float timeSinceLastFire = 0f;
     [Header("Movement")]
     public float speed = 5.0f;
     public bool moving = false;
     public bool movingActive = false;
-    public float rotationSpeed = 10f;
     public Vector3 mousePosInWorld;
     [Header("Cylinder")]
     public GameObject cylinder;
     public Vector3 cylinderRotationalOffset;
     // other
-    private float prevYrotation = 0f;
+    public float prevYrotation = 0f;
     private float accelerationValue = 0f;
     
     // Start is called before the first frame update
@@ -43,63 +27,15 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        uiTextManager = GameObject.Find("UITextManager").GetComponent<UiTextManager>();
+        
     }
 
     void Update(){
-        CalculateOffsetAngle();
         CheckForToggleMovement(); 
         GetVariables();
-        GunCalculations();
         Movement();
         Rotate();  
-        UpdateUITextManagerVariables();
     }
-
-    private void UpdateUITextManagerVariables(){
-        uiTextManager.GunUpdateVariableTool(timeSinceLastFire, bulletSpeed, bulletDamage, bulletMass, firerate);
-    }
-
-    private void CalculateOffsetAngle(){
-        if(offsetType == "sin"){
-            gunOffsetAngle = Mathf.Sin(Time.time * gunOffsetSpeed) * gunOffsetQuantity;
-        }
-        else if(offsetType == "cos"){
-            gunOffsetAngle = Mathf.Cos(Time.time * gunOffsetSpeed) * gunOffsetQuantity;
-        }
-        else if(offsetType == "natural"){
-            gunOffsetAngle = 0f;
-        }
-        else{
-            Debug.LogError("Invalid offset type");
-        }
-    }
-
-    private void GunCalculations(){
-        if(canShoot){
-            timeSinceLastFire += Time.deltaTime;
-            if(Input.GetMouseButton(0) && cooldown <= 0f){
-                Shoot();
-            }
-            else if(cooldown > 0f){
-                cooldown -= Time.deltaTime;
-            }
-        }
-    }
-
-    private void Shoot(){
-        if(movingActive == true){return;}
-        timeSinceLastFire = 0f;
-        CinemachineShake.Instance.ShakeCamera(gunScreenShake, gunScreenShakeTime);
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-        BulletScript bulletScript = bullet.GetComponent<BulletScript>();
-        bulletScript.yDirection = prevYrotation + gunOffsetAngle;
-        bulletScript.damage = bulletDamage;
-        bulletScript.speed = bulletSpeed;
-        bulletScript.pierce = pierce;
-        cooldown += (1f / firerate);
-    }
-
     private void GetVariables(){
         //get mouse pos in world with ground layermask raycast
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -132,7 +68,6 @@ public class Player : MonoBehaviour
     }
     private void Rotate(){
         //rotate cylinders x rotation to look at mouse ONLY. keep all other rotations the same
-        float tempRotSpeed = rotationSpeed;
         if(movingActive == false){accelerationValue = 0;}
         //point transform at lookpos
         transform.LookAt(new Vector3(mousePosInWorld.x, transform.position.y, mousePosInWorld.z));
@@ -173,9 +108,6 @@ public class Player : MonoBehaviour
 
     public void SetActiveMovingFalse(){
         movingActive = false;
-    }
-    public void ToggleCanShoot(){
-        canShoot = !canShoot;
     }
 
     private float GetVector2Distance(Vector3 v1, Vector3 v2)

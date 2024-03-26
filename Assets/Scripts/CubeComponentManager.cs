@@ -78,6 +78,10 @@ public class CubeComponentManager : MonoBehaviour
         }
     }
 
+    private void SetCollisionActiveOfComponent(int index, bool active){
+        cubeComponents[index].GetComponent<Collider>().enabled = active;
+    }
+
     private void CalculateAndRunMovementOfComponent(int index){
         if(targets[index] == null){
             FindTargetForComponent(index);
@@ -117,9 +121,11 @@ public class CubeComponentManager : MonoBehaviour
     private void SetMaterialOfMeshRendererBasedOnTarget(int index){
         if(targets[index] == null){
             meshRenderers[index].material = offensiveMaterial;
+            SetCollisionActiveOfComponent(index, true);
         }
         else{
             meshRenderers[index].material = passiveMaterial;
+            SetCollisionActiveOfComponent(index, false);
         }
     }
     
