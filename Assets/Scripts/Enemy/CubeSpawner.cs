@@ -26,11 +26,9 @@ public class CubeSpawner : MonoBehaviour
         while(true){
             float tempSpawnRate;
             if(CheckAllEnemyCreatorsForEmptySlots()){
-                Debug.Log("Found Empty Spawner");
                 tempSpawnRate = 1f / spawnRateWhenEmptySlots;
             }
             else{
-                Debug.Log("Did Not Find Empty Spawner");
                 if(spawnRate == 0f){
                     timeElapsed = 0f;
                     tempSpawnRate = 1f;
@@ -42,7 +40,6 @@ public class CubeSpawner : MonoBehaviour
             if(timeElapsed >= tempSpawnRate){
                 timeElapsed -= tempSpawnRate;
                 if(GameObject.FindObjectsOfType<CubeComponent>().Length < maxCubes){
-                    Debug.Log("Spawning Enemy");
                     SpawnEnemy();
                 }
             }
@@ -76,7 +73,6 @@ public class CubeSpawner : MonoBehaviour
         float yAxis = ySpawnHeight;
         if(spawnAxis == "x"){
             xAxis += Random.Range(-1f,1f) * xSpawnDistance;
-            Debug.Log(xAxis);
             if(spawnDirection == "positive"){
                 zAxis = zSpawnDistance;
             }
@@ -86,7 +82,6 @@ public class CubeSpawner : MonoBehaviour
         }
         else if(spawnAxis == "z"){
             zAxis += Random.Range(-1f,1f)*zSpawnDistance;
-            Debug.Log(zAxis);
             if(spawnDirection == "positive"){
                 xAxis = xSpawnDistance;
             }

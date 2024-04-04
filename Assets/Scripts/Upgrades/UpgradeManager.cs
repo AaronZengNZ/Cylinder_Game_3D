@@ -24,6 +24,8 @@ public class UpgradeManager : MonoBehaviour
     //bulletMass
     public float bulletMassAdditiveChanges = 0f;
     public float bulletMassMultiplicativeChanges = 1f;
+    public float gunOffsetSpeedChanges = 0f;
+    public float gunOffsetQuantityChanges = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -72,90 +74,86 @@ public class UpgradeManager : MonoBehaviour
     private void SimulateUpgradeStatByUpgrade(SpecialUpgradeSimulator target){
         switch (target.upgradeValue1Equation){
             case "add":
-                switch (target.upgradeValue1Type){
-                    case "firerate":
-                        firerateAdditiveChanges += target.upgradeValue1;
-                        break;
-                    case "damage":
-                        damageAdditiveChanges += target.upgradeValue1;
-                        break;
-                    case "pierce":
-                        pierceAdditiveChanges += target.upgradeValue1;
-                        break;
-                    case "bulletSpeed":
-                        bulletSpeedAdditiveChanges += target.upgradeValue1;
-                        break;
-                    case "bulletMass":
-                        bulletMassAdditiveChanges += target.upgradeValue1;
-                        break;
-                }
+                UpgradeValueHandlerAdditive(target.upgradeValue1Type, target.upgradeValue1);
             break;
             case "multiply":
-                switch (target.upgradeValue1Type){
-                    case "firerate":
-                        firerateMultiplicativeChanges += target.upgradeValue1;
-                        break;
-                    case "damage":
-                        damageMultiplicativeChanges += target.upgradeValue1;
-                        break;
-                    case "pierce":
-                        pierceMultiplicativeChanges += target.upgradeValue1;
-                        break;
-                    case "bulletSpeed":
-                        bulletSpeedMultiplicativeChanges += target.upgradeValue1;
-                        break;
-                    case "bulletMass":
-                        bulletMassMultiplicativeChanges += target.upgradeValue1;
-                        break;
-                }
+                UpgradeValueHandlerMultiplicative(target.upgradeValue1Type, target.upgradeValue1);
             break;
         }
         switch (target.upgradeValue2Equation){
             case "add":
-                switch (target.upgradeValue2Type){
-                    case "firerate":
-                        firerateAdditiveChanges += target.upgradeValue2;
-                        break;
-                    case "damage":
-                        damageAdditiveChanges += target.upgradeValue2;
-                        break;
-                    case "pierce":
-                        pierceAdditiveChanges += target.upgradeValue2;
-                        break;
-                    case "bulletSpeed":
-                        bulletSpeedAdditiveChanges += target.upgradeValue2;
-                        break;
-                    case "bulletMass":
-                        bulletMassAdditiveChanges += target.upgradeValue2;
-                        break;
-                }
+                UpgradeValueHandlerAdditive(target.upgradeValue2Type, target.upgradeValue2);
             break;
             case "multiply":
-                switch (target.upgradeValue2Type){
-                    case "firerate":
-                        firerateMultiplicativeChanges += target.upgradeValue2;
-                        break;
-                    case "damage":
-                        damageMultiplicativeChanges += target.upgradeValue2;
-                        break;
-                    case "pierce":
-                        pierceMultiplicativeChanges += target.upgradeValue2;
-                        break;
-                    case "bulletSpeed":
-                        bulletSpeedMultiplicativeChanges += target.upgradeValue2;
-                        break;
-                    case "bulletMass":
-                        bulletMassMultiplicativeChanges += target.upgradeValue2;
-                        break;
-                }
+                UpgradeValueHandlerMultiplicative(target.upgradeValue2Type, target.upgradeValue2);
             break;  
         }      
     }
 
+    private void UpgradeValueHandlerAdditive(string upgradeType, float upgradeValue){
+        switch (upgradeType){
+            case "gun_firerate":
+                firerateAdditiveChanges += upgradeValue;
+                break;
+            case "gun_power":
+                damageAdditiveChanges += upgradeValue;
+                break;
+            case "gun_pierce":
+                pierceAdditiveChanges += upgradeValue;
+                break;
+            case "gun_bullet_speed":
+                bulletSpeedAdditiveChanges += upgradeValue;
+                break;
+            case "gun_bullet_mass":
+                bulletMassAdditiveChanges += upgradeValue;
+                break;
+            case "gun_offset_quantity":
+                gunOffsetQuantityChanges += upgradeValue;
+                break;
+        }
+    }
+
+    private void UpgradeValueHandlerMultiplicative(string upgradeType, float upgradeValue){
+        switch (upgradeType){
+            case "gun_firerate":
+                firerateMultiplicativeChanges *= upgradeValue;
+                break;
+            case "gun_power":
+                damageMultiplicativeChanges *= upgradeValue;
+                break;
+            case "gun_pierce":
+                pierceMultiplicativeChanges *= upgradeValue;
+                break;
+            case "gun_bullet_speed":
+                bulletSpeedMultiplicativeChanges *= upgradeValue;
+                break;
+            case "gun_bullet_mass":
+                bulletMassMultiplicativeChanges *= upgradeValue;
+                break;
+        }
+    }
+
     private void SimulateUpgradeAllStats(){
+        ResetVariablesToZero();
         foreach(SpecialUpgradeSimulator upgrade in upgradeSimulators){
             SimulateUpgradeStatByUpgrade(upgrade);
         }
+    }
+
+    private void ResetVariablesToZero(){
+        //TRY TO FIND SOME WAY TO DO THIS WITH A LIST OR SOMETHING
+        firerateAdditiveChanges = 0f;
+        firerateMultiplicativeChanges = 1f;
+        damageAdditiveChanges = 0f;
+        damageMultiplicativeChanges = 1f;
+        pierceAdditiveChanges = 0f;
+        pierceMultiplicativeChanges = 1f;
+        bulletSpeedAdditiveChanges = 0f;
+        bulletSpeedMultiplicativeChanges = 1f;
+        bulletMassAdditiveChanges = 0f;
+        bulletMassMultiplicativeChanges = 1f;
+        gunOffsetSpeedChanges = 0f;
+        gunOffsetQuantityChanges = 0f;
     }
 
     // Update is called once per frame
@@ -166,6 +164,7 @@ public class UpgradeManager : MonoBehaviour
         damageAdditiveChanges, damageMultiplicativeChanges,
         pierceAdditiveChanges, pierceMultiplicativeChanges,
         bulletSpeedAdditiveChanges, bulletSpeedMultiplicativeChanges,
-        bulletMassAdditiveChanges, bulletMassMultiplicativeChanges);
+        bulletMassAdditiveChanges, bulletMassMultiplicativeChanges,
+        gunOffsetSpeedChanges, gunOffsetQuantityChanges);
     }
 }

@@ -156,6 +156,9 @@ MonoBehaviour:
   index: 0
   movementType: chase
   enemyUpdateManager: {fileID: 0}
+  xpDrop: 60
+  particlesDropped: 6
+  xpParticle: {fileID: 4530396533856604348, guid: be3c76b558ada4f399cdf32e7e0ac660, type: 3}
   dead: 0
 --- !u!65 &5719216056735306003
 BoxCollider:

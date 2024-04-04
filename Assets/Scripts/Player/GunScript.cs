@@ -51,6 +51,7 @@ public class GunScript : MonoBehaviour
         firerate = statsManager.firerate;
         bulletDamage = statsManager.damage;
         bulletSpeed = statsManager.bulletSpeed;
+        pierce = statsManager.pierce;
         offsetType = statsManager.GunOffsetType;
         gunOffsetSpeed = statsManager.gunOffsetSpeed;
         gunOffsetQuantity = statsManager.gunOffsetQuantity;

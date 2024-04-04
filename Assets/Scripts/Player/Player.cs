@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     [Header("References")]
     public Rigidbody rb;
     public Transform cursorLocation;
+    public Transform finalCursorLocation;
     public Animator anim;
     public GameObject bulletPrefab;
     public UiTextManager uiTextManager;
@@ -40,10 +41,32 @@ public class Player : MonoBehaviour
         //get mouse pos in world with ground layermask raycast
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
+        bool hitVoid = false;
         if(Physics.Raycast(ray, out hit, 1000, LayerMask.GetMask("Ground"))){
             mousePosInWorld = hit.point;
+            if(hit.collider.tag == "Void"){
+                hitVoid = true;
+            }
         }
         cursorLocation.position = mousePosInWorld;
+        //case another ray from the player's position to the mouse position
+        if(hitVoid){
+            Vector3 tempMousePosInWorld = mousePosInWorld;
+            tempMousePosInWorld.y = transform.position.y;
+            mousePosInWorld = tempMousePosInWorld;
+            cursorLocation.position = mousePosInWorld;
+            //cast a raycast from playerPosition to mousePosInWorld
+            if(Physics.Raycast(transform.position, mousePosInWorld - transform.position, out hit, 1000, LayerMask.GetMask("Wall"))){
+                mousePosInWorld = hit.point;
+            }
+        }
+        finalCursorLocation.position = mousePosInWorld;
+    }
+
+    void OnTriggerEnter(Collider other){
+        if(other.tag == "Obstacle"){
+            moving = false;
+        }
     }
 
     private void Movement(){
@@ -98,6 +121,10 @@ public class Player : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1)){
             moving = !moving;
+            if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f){
+                moving = false;
+                return;
+            }
         }
         anim.SetBool("Moving", moving);
     }

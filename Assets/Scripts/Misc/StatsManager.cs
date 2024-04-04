@@ -31,12 +31,14 @@ public class StatsManager : MonoBehaviour
     float damageAdditiveChanges, float damageMultiplicativeChanges, 
     float pierceAdditiveChanges, float pierceMultiplicativeChanges,
     float bulletSpeedAdditiveChanges, float bulletSpeedMultiplicativeChanges,
-    float bulletMassAdditiveChanges, float bulletMassMultiplicativeChanges){
+    float bulletMassAdditiveChanges, float bulletMassMultiplicativeChanges,
+    float gunOffsetSpeedChanges, float gunOffsetQuantityChanges){
         firerate = (firerateBase + firerateAdditiveChanges) * firerateMultiplicativeChanges;
         damage = (damageBase + damageAdditiveChanges) * damageMultiplicativeChanges;
         pierce = (pierceBase + pierceAdditiveChanges) * pierceMultiplicativeChanges;
         bulletSpeed = (bulletSpeedBase + bulletSpeedAdditiveChanges) * bulletSpeedMultiplicativeChanges;
         bulletMass = (bulletMassBase + bulletMassAdditiveChanges) * bulletMassMultiplicativeChanges;
+        gunOffsetQuantity = gunOffsetQuantityBase = gunOffsetQuantityChanges;
     }
     // Update is called once per frame
     void Update()

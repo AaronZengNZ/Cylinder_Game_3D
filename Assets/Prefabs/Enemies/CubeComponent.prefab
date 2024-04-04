@@ -103,6 +103,8 @@ MonoBehaviour:
   deathParticles: {fileID: 1481150905211913128, guid: cb4d96827eb2a4cba9682a768057b217, type: 3}
   hasTarget: 0
   index: 0
+  xpDrop: 5
+  xpParticle: {fileID: 4530396533856604348, guid: be3c76b558ada4f399cdf32e7e0ac660, type: 3}
 --- !u!54 &909012403481237004
 Rigidbody:
   m_ObjectHideFlags: 0

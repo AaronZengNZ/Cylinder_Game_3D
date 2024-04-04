@@ -26,6 +26,10 @@ public class Enemy : MonoBehaviour
     public float index = 0f;
     public string movementType = "chase";
     public EnemyUpdateManager enemyUpdateManager;
+    [Header("Loot")]
+    public float xpDrop = 60f;
+    public float particlesDropped = 6f;
+    public GameObject xpParticle;
 
     // OTHER
     public bool dead = false;
@@ -39,6 +43,7 @@ public class Enemy : MonoBehaviour
         currentBlockHitpoints = hitpointsPerBlock;
         enemyUpdateManager = GameObject.Find("EnemyUpdateManager").GetComponent<EnemyUpdateManager>();
         enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index);
+        SetActivationOfColliders(false);
         StartCoroutine(Activate());
     }
 
@@ -46,6 +51,7 @@ public class Enemy : MonoBehaviour
         activated = false;
         enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index);
         yield return new WaitForSeconds(activationTime);
+        SetActivationOfColliders(true);
         activated = true;
         enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index);
     }
@@ -65,6 +71,7 @@ public class Enemy : MonoBehaviour
                 dead = true;
                 enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index);
                 anim.SetTrigger("Dead");
+                SetActivationOfColliders(false);
             }
             else{
                 currentBlockHitpoints = hitpointsPerBlock;
@@ -97,27 +104,26 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    // void Update()
-    // {
-    //     //also make a script to assist with movement (reduce lag)
-    //     Movement();
-    // }
-
-    // private void Movement(){
-    //     if(dead){
-    //         rb.velocity = Vector3.zero;
-    //         return;
-    //     }
-    //     if(activated){
-    //         Vector3 direction = player.transform.position - transform.position;
-    //         rb.velocity = direction.normalized * moveSpeed;
-    //     }
-    // }
-
     public void DieAndDestroy(){
+        DropParticles();
         enemyUpdateManager.EnemyDestroyed(index);
         Instantiate(deathParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);
+    }
+
+    private void SetActivationOfColliders(bool value){
+        foreach(Collider col in GetComponents<Collider>()){
+            col.enabled = value;
+        }
+
+    }
+
+    private void DropParticles(){
+        for(int i = 0; i < particlesDropped; i++){
+            GameObject newParticle = Instantiate(xpParticle, transform.position, Quaternion.identity);
+            ExperienceParticle particleScript = newParticle.GetComponent<ExperienceParticle>();
+            particleScript.player = player;
+            particleScript.experienceValue = xpDrop / particlesDropped;
+        }
     }
 }

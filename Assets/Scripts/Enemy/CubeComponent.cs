@@ -10,6 +10,8 @@ public class CubeComponent : MonoBehaviour
     float hp = 10f;
     public bool hasTarget = false;
     public float index = 0;
+    public float xpDrop = 5f;
+    public GameObject xpParticle;
 
     void Start(){
         //disable mesh renderer
@@ -31,8 +33,14 @@ public class CubeComponent : MonoBehaviour
     }
 
     private void Die(){
+        InstantiateParticle();
         Instantiate(deathParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);
+    }
+
+    private void InstantiateParticle(){
+        GameObject xp = Instantiate(xpParticle, transform.position, Quaternion.identity);
+        xp.GetComponent<ExperienceParticle>().experienceValue = xpDrop;
     }
 
     private void OnDestroy(){

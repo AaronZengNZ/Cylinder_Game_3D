@@ -9,6 +9,9 @@ TagManager:
   - PlayerBullet
   - EnemyCreator
   - CubeComponent
+  - ExperienceParticle
+  - Void
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -20,9 +23,9 @@ TagManager:
   - Ground
   - Enemy
   - CubeComponent
-  - 
-  - 
-  - 
+  - Loot
+  - Wall
+  - Obstacle
   - 
   - 
   - 
