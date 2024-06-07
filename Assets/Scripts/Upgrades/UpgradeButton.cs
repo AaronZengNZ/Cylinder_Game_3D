@@ -18,11 +18,16 @@ public class UpgradeButton : MonoBehaviour
     //string that is text that follows the title
     public string titleType = "<color=#FF5555>Special</color>";
     public TextMeshProUGUI DescText;
+    [TextArea(2, 10)]
     public string[] descriptions;
     public TextMeshProUGUI FunctionText;
+    [TextArea(2, 10)]
     public string[] functions;
+    public bool functionTransitions = true;
     public TextMeshProUGUI SecondaryFunctionText;
+    [TextArea(2, 10)]
     public string[] secondaryFunctions;
+    public bool secondaryTransitions = true;
     public TextMeshProUGUI CostText;
     public float[] costs;
     [Header("Variables")]
@@ -36,6 +41,7 @@ public class UpgradeButton : MonoBehaviour
     public string upgradeValue2Equation = "add";
     public float[] upgradeValue2;
     public int level = 0;
+    public float currentCost = 1f;
     public bool upgrading = false;
     
     void Start(){
@@ -43,6 +49,16 @@ public class UpgradeButton : MonoBehaviour
         upgradeButtonManager = GameObject.Find("UpgradeButtonManager").GetComponent<UpgradeButtonManager>();
         animator = GetComponent<Animator>();
         hoverOutline.enabled = false;
+        StartCoroutine(DelayedUpdate());
+    }
+
+    public void UpdateCost(float multiplier){
+        currentCost = Mathf.Round(costs[level] * multiplier);
+        CostText.text = "Cost: " + currentCost.ToString() + " UP";
+    }
+
+    IEnumerator DelayedUpdate(){
+        yield return new WaitForSeconds(0f);
         UpdateTexts();
     }
 
@@ -71,6 +87,11 @@ public class UpgradeButton : MonoBehaviour
     }
 
     public void CancelUpgrade(){
+        StartCoroutine(DelayedDestruct());
+    }
+
+    IEnumerator DelayedDestruct(){
+        yield return new WaitForSecondsRealtime(0f);
         Destroy(gameObject);
     }
 
@@ -82,10 +103,25 @@ public class UpgradeButton : MonoBehaviour
     }
 
     private void UpdateTexts(){
-        TitleText.text = title + " " + level + " - " + titleType;
+        if(level >= 1){
+            TitleText.text = title + " " + (level + 1) + " - " + titleType;
+        }
+        else{
+            TitleText.text = title + " - " + titleType;
+        }
         DescText.text = descriptions[level];
-        FunctionText.text = functions[level];
-        SecondaryFunctionText.text = secondaryFunctions[level];
-        CostText.text = "Cost: " + costs[level].ToString() + " UP";
+        if(level > 1 && functionTransitions){
+            FunctionText.text = functions[level - 1] + " > " + functions[level];
+        }
+        else{
+            FunctionText.text = functions[level];
+        }
+        if(level > 1 && secondaryTransitions){
+            SecondaryFunctionText.text = secondaryFunctions[level - 1] + " > " + secondaryFunctions[level];
+        }
+        else{
+            SecondaryFunctionText.text = secondaryFunctions[level];
+        }
+        CostText.text = "Cost: " + currentCost.ToString() + " UP";
     }
 }

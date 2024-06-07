@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,25 +6,40 @@ using UnityEngine;
 public class UpgradeButtonManager : MonoBehaviour
 {
     public UpgradeButton[] upgradeButtons;
+    public LevelManager levelManager;
     public UpgradeListHolder upgradeListHolder;
+    public NotificationHandler notificationHandler;
     public GameObject upgradeParent;
     public float upgradesToInstantiate = 3f;
     public bool upgrading = false;
     // Start is called before the first frame update
     void Start()
     {
+        levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+        notificationHandler = GameObject.Find("NotificationHandler").GetComponent<NotificationHandler>();
         FindButtons();
-        InstantiateNewUpgrades("special");
+        StartCoroutine(InstantiateNewUpgrades("special"));
     }
 
     // Update is called once per frame
     void Update()
     {
+        FindButtons();
         CheckButtons();
     }
 
     public void GetUpgrade(UpgradeButton upgradeTarget){
         if(upgrading == false){
+            float upgradePrice = upgradeTarget.currentCost;
+            if(levelManager.CheckPrice(upgradePrice)){
+                levelManager.SpendCurrency(upgradePrice);
+            }
+            else{
+                if(!Input.GetKeyDown(KeyCode.Space)){
+                    notificationHandler.NewNotification("Not enough upgrade points!");
+                }
+                return;
+            }
             upgrading = true;
             foreach(UpgradeButton button in upgradeButtons){
                 if(button != upgradeTarget){
@@ -32,21 +48,29 @@ public class UpgradeButtonManager : MonoBehaviour
             }
             if(upgradeTarget.upgradeType == "special"){
                 upgradeListHolder.AddSpecialUpgradeToList(upgradeTarget.selfPrefab);
+                upgradeListHolder.SpecialUpgradeLevelUp(upgradeTarget.selfPrefab);
             }
-            upgradeListHolder.UpgradeLevelUp(upgradeTarget.selfPrefab);
+            else{
+                upgradeListHolder.UpgradeLevelUp(upgradeTarget.selfPrefab);
+            }
             upgradeTarget.Upgrade();
         }
     }
 
     public void UpgradeFinished(){
         upgrading = false;
-        InstantiateNewUpgrades("special");
+        StartCoroutine(InstantiateNewUpgrades("normal"));
     }
 
-    private void InstantiateNewUpgrades(string type){
+    IEnumerator InstantiateNewUpgrades(string type){
+        yield return new WaitForSecondsRealtime(0.5f);
+        UnityEngine.Debug.Log("Instantiating " + type + " upgrades");
         GameObject[] newUpgrades = upgradeListHolder.GetRandomUpgrades(type, upgradesToInstantiate);
         for(int i = 0; i < newUpgrades.Length; i++){
             GameObject newUpgrade = Instantiate(newUpgrades[i], upgradeParent.transform);
+            UpgradeButton newUpgradeButton = newUpgrade.GetComponent<UpgradeButton>();
+            newUpgradeButton.level = upgradeListHolder.GetLevelOfUpgrade(newUpgradeButton.upgradeType, newUpgrades[i]);
+            newUpgradeButton.UpdateCost(levelManager.GetMultiplier());
         }
     }
 

@@ -11,6 +11,8 @@ public class EnemyUpdateManager : MonoBehaviour
     private bool[] activatedBooleans = new bool[10000];
     private float[] movementSpeeds = new float[10000];
     private string[] movementTypes = new string[10000];
+    private float[] customVar1 = new float[10000];
+    private float[] customVar2 = new float[10000];
     void Start(){
         player = GameObject.Find("Player").transform;
     }
@@ -21,12 +23,14 @@ public class EnemyUpdateManager : MonoBehaviour
         UpdateEnemies();
     }
 
-    public void SetVariables(Rigidbody rb, bool dead, bool activated, float moveSpeed, string movementType, float index){
+    public void SetVariables(Rigidbody rb, bool dead, bool activated, float moveSpeed, string movementType, float index, float cVar, float cVar2){
         rbs[(int)index] = rb;
         deadBooleans[(int)index] = dead;
         activatedBooleans[(int)index] = activated;
         movementSpeeds[(int)index] = moveSpeed;
         movementTypes[(int)index] = movementType;
+        customVar1[(int)index] = cVar;
+        customVar2[(int)index] = cVar2;
     }
 
     private void UpdateEnemies(){
@@ -44,9 +48,31 @@ public class EnemyUpdateManager : MonoBehaviour
             return;
         }
         else if(activatedBooleans[realIndex] && rbs[realIndex] != null){
-            if(movementTypes[realIndex] == "chase"){
-                Vector3 direction = player.position - enemies[realIndex].transform.position;
-                rbs[realIndex].velocity = direction.normalized * movementSpeeds[realIndex];
+            string currentMovementType = movementTypes[realIndex];
+            Vector3 direction = player.position - enemies[realIndex].transform.position;
+            if(enemies[realIndex].GetComponent<Enemy>().canMove == false){
+                rbs[realIndex].velocity = Vector3.zero;
+                return;
+            }
+            switch (currentMovementType)
+            {
+                case "chase":
+                    rbs[realIndex].velocity = direction.normalized * movementSpeeds[realIndex];
+                    break;
+                case "stalk":
+                    float distance = Vector3.Distance(player.position, enemies[realIndex].transform.position);
+                    if(distance < customVar1[realIndex]){
+                        rbs[realIndex].velocity = -direction.normalized * movementSpeeds[realIndex];
+                    }
+                    else if(distance > customVar2[realIndex]){
+                        rbs[realIndex].velocity = direction.normalized * movementSpeeds[realIndex];
+                    }
+                    else{
+                        rbs[realIndex].velocity = Vector3.zero;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

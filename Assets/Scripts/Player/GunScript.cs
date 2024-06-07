@@ -21,7 +21,6 @@ public class GunScript : MonoBehaviour
     private float gunOffsetSpeed = 2f;
     private float gunOffsetQuantity = 10f;
     private float bulletMass = 1f;
-    private float cooldown = 0f;
     private float pierce = 1f;
     private float timeSinceLastFire = 0f;
     private bool movingActive = false;
@@ -48,14 +47,14 @@ public class GunScript : MonoBehaviour
     private void GetVariables(){
         movingActive = player.movingActive;
         prevYrotation = player.prevYrotation;
-        firerate = statsManager.firerate;
-        bulletDamage = statsManager.damage;
-        bulletSpeed = statsManager.bulletSpeed;
-        pierce = statsManager.pierce;
-        offsetType = statsManager.GunOffsetType;
-        gunOffsetSpeed = statsManager.gunOffsetSpeed;
-        gunOffsetQuantity = statsManager.gunOffsetQuantity;
-        bulletMass = statsManager.bulletMass;
+        firerate = statsManager.GetStatFloat("firerate");
+        bulletDamage = statsManager.GetStatFloat("damage");
+        bulletSpeed = statsManager.GetStatFloat("bulletSpeed");
+        pierce = statsManager.GetStatFloat("pierce");
+        offsetType = statsManager.GetStatString("gunOffsetType");
+        gunOffsetSpeed = statsManager.GetStatFloat("gunOffsetSpeed");
+        gunOffsetQuantity = statsManager.GetStatFloat("gunOffsetQuantity");
+        bulletMass = statsManager.GetStatFloat("bulletMass");
     }
 
     private void CalculateOffsetAngle(){
@@ -76,11 +75,8 @@ public class GunScript : MonoBehaviour
     private void GunCalculations(){
         if(canShoot){
             timeSinceLastFire += Time.deltaTime;
-            if(Input.GetMouseButton(0) && cooldown <= 0f){
+            if(Input.GetMouseButton(0) && timeSinceLastFire >= 1f/firerate){
                 Shoot();
-            }
-            else if(cooldown > 0f){
-                cooldown -= Time.deltaTime;
             }
         }
     }
@@ -95,6 +91,5 @@ public class GunScript : MonoBehaviour
         bulletScript.damage = bulletDamage;
         bulletScript.speed = bulletSpeed;
         bulletScript.pierce = pierce;
-        cooldown += (1f / firerate);
     }
 }

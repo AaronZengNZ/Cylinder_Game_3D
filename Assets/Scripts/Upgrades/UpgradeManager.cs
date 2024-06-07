@@ -8,35 +8,63 @@ public class UpgradeManager : MonoBehaviour
     public GameObject specialUpgradePrefab;
     public SpecialUpgradeSimulator[] upgradeSimulators;
     public StatsManager statsManager;
-    [Header("Other")]
+    [Header("Other (Gun)")]
     //firerate
-    public float firerateAdditiveChanges = 0f;
-    public float firerateMultiplicativeChanges = 1f;
+    private float firerateAdditiveChanges = 0f;
+    private float firerateMultiplicativeChanges = 1f;
     //damage
-    public float damageAdditiveChanges = 0f;
-    public float damageMultiplicativeChanges = 1f;
+    private float damageAdditiveChanges = 0f;
+    private float damageMultiplicativeChanges = 1f;
     //pierce
-    public float pierceAdditiveChanges = 0f;
-    public float pierceMultiplicativeChanges = 1f;
+    private float pierceAdditiveChanges = 0f;
+    private float pierceMultiplicativeChanges = 1f;
     //bulletSpeed
-    public float bulletSpeedAdditiveChanges = 0f;
-    public float bulletSpeedMultiplicativeChanges = 1f;
+    private float bulletSpeedAdditiveChanges = 0f;
+    private float bulletSpeedMultiplicativeChanges = 1f;
     //bulletMass
-    public float bulletMassAdditiveChanges = 0f;
-    public float bulletMassMultiplicativeChanges = 1f;
-    public float gunOffsetSpeedChanges = 0f;
-    public float gunOffsetQuantityChanges = 0f;
+    private float bulletMassAdditiveChanges = 0f;
+    private float bulletMassMultiplicativeChanges = 1f;
+    //gunOffset
+    private float gunOffsetSpeedChanges = 0f;
+    public float gunOffsetQuantityBase = 10f;
+    private float gunOffsetQuantityChanges = 0f;
+    //special
+    [Header ("Trig")]
+    public float cosineTimeMult = 1f;
+    public float cosineSpeedMult = 1f;
+    public float tangentRequirement = 3f;
+    public float tangentBuff = 0f;
+    [Header ("Misc Stats")]
+    public float defenseMultiplicativeChanges = 1f;
+    public float defenseAdditiveChanges = 0f;
+    [Header("Other (Player)")]
+    public float playerSpeedAdditiveChanges = 0f;
+    public float playerSpeedMultiplicativeChanges = 1f;
+    public float playerMassAdditiveChanges = 0f;
+    public float playerMassMultiplicativeChanges = 1f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        ResetVariablesToZero();
     }
 
     public void NewUpgrade(string upgradeType, string upgradeName, string upgradeId, 
     string upgradeValue1Type, string upgradeValue1Equation, float upgradeValue1, 
     string upgradeValue2Type, string upgradeValue2Equation, float upgradeValue2){
         if(CheckUpgradeExists(upgradeName)){
+            //find the upgrade and replace the values
+            GameObject oldUpgrade = null;
+            foreach(SpecialUpgradeSimulator upgrade in upgradeSimulators){
+                if(upgrade.upgradeName == upgradeName){
+                    UnityEngine.Debug.Log(upgrade.upgradeName);
+                    oldUpgrade = upgrade.gameObject;
+                }
+            }
+            if(oldUpgrade == null){return;}
+            SpecialUpgradeSimulator UpgradeSimulator = oldUpgrade.GetComponent<SpecialUpgradeSimulator>();
+            UpgradeSimulator.upgradeValue1 = upgradeValue1;
+            UpgradeSimulator.upgradeValue2 = upgradeValue2;
             return;
         }
         else{
@@ -110,6 +138,27 @@ public class UpgradeManager : MonoBehaviour
             case "gun_offset_quantity":
                 gunOffsetQuantityChanges += upgradeValue;
                 break;
+            case "cos_time":
+                cosineTimeMult += upgradeValue;
+                break;
+            case "cos_speed":
+                cosineSpeedMult += upgradeValue;
+                break;
+            case "player_speed":
+                playerSpeedAdditiveChanges += upgradeValue;
+                break;
+            case "player_mass":
+                playerMassAdditiveChanges += upgradeValue;
+                break;
+            case "defense":
+                defenseAdditiveChanges += upgradeValue;
+                break;
+            case "tangent":
+                tangentBuff += upgradeValue;
+                break;
+            case "tangentReq":
+                tangentRequirement += upgradeValue;
+                break;
         }
     }
 
@@ -129,6 +178,18 @@ public class UpgradeManager : MonoBehaviour
                 break;
             case "gun_bullet_mass":
                 bulletMassMultiplicativeChanges *= upgradeValue;
+                break;
+            case "gun_offset_speed":
+                gunOffsetSpeedChanges += upgradeValue;
+                break;
+            case "gun_offset_quantity":
+                gunOffsetQuantityChanges += upgradeValue;
+                break;
+            case "player_speed":
+                playerSpeedMultiplicativeChanges *= upgradeValue;
+                break;
+            case "player_mass":
+                playerMassMultiplicativeChanges *= upgradeValue;
                 break;
         }
     }
@@ -154,17 +215,55 @@ public class UpgradeManager : MonoBehaviour
         bulletMassMultiplicativeChanges = 1f;
         gunOffsetSpeedChanges = 0f;
         gunOffsetQuantityChanges = 0f;
+        cosineTimeMult = 0f;
+        cosineSpeedMult = 1f;
+        playerMassAdditiveChanges = 0f;
+        playerMassMultiplicativeChanges = 1f;
+        playerSpeedAdditiveChanges = 0f;
+        playerSpeedMultiplicativeChanges = 1f;
+        defenseAdditiveChanges = 0f;
+        defenseMultiplicativeChanges = 1f;
+        tangentBuff = 0f;
+        tangentRequirement = 0f;
     }
 
     // Update is called once per frame
     void Update()
     {
         SimulateUpgradeAllStats();
-        statsManager.UpgradeManagerStatTool(firerateAdditiveChanges, firerateMultiplicativeChanges,
-        damageAdditiveChanges, damageMultiplicativeChanges,
-        pierceAdditiveChanges, pierceMultiplicativeChanges,
-        bulletSpeedAdditiveChanges, bulletSpeedMultiplicativeChanges,
-        bulletMassAdditiveChanges, bulletMassMultiplicativeChanges,
-        gunOffsetSpeedChanges, gunOffsetQuantityChanges);
+        float newFirerateMultiplicativeChanges = firerateMultiplicativeChanges;
+        newFirerateMultiplicativeChanges = newFirerateMultiplicativeChanges * CosSpeed();
+        if(TanCheck()){
+            defenseAdditiveChanges += tangentBuff;
+        }
+        statsManager.UpdateStatCalculation("firerate", firerateAdditiveChanges, newFirerateMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("damage", damageAdditiveChanges, damageMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("pierce", pierceAdditiveChanges, pierceMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("bulletSpeed", bulletSpeedAdditiveChanges, bulletSpeedMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("bulletMass", bulletMassAdditiveChanges, bulletMassMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("gunOffsetSpeed", gunOffsetSpeedChanges);
+        statsManager.UpdateStatCalculation("gunOffsetQuantity", gunOffsetQuantityChanges);
+        statsManager.UpdateStatCalculation("playerSpeed", playerSpeedAdditiveChanges, playerSpeedMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("playerMass", playerMassAdditiveChanges, playerMassMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("defense", defenseAdditiveChanges, defenseMultiplicativeChanges);
+    }
+
+    private bool TanCheck(){
+        float tangent = Mathf.Tan(Time.time);
+        if(tangent > tangentRequirement){
+            return true;
+        }
+        return false;
+    }
+
+    private float CosSpeed(){
+        if(cosineTimeMult == 0f){
+            return 1f;
+        }
+        float value = Mathf.Sin(Time.time) * cosineTimeMult + cosineSpeedMult;
+        if(value <= 0.01){
+            value = 0;
+        }
+        return value;
     }
 }

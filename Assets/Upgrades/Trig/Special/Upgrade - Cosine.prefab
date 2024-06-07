@@ -621,13 +621,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -680,32 +680,61 @@ MonoBehaviour:
   upgradeButtonManager: {fileID: 0}
   hoverOutline: {fileID: 6257515522196203186}
   animator: {fileID: 0}
-  selfPrefab: {fileID: 0}
+  selfPrefab: {fileID: 3145642060849528746}
   TitleText: {fileID: 2167569601945400845}
   title: Speed of [Cosines]
   titleType: <color=#FF5555>Special</color>
   DescText: {fileID: 8990673135811423903}
   descriptions:
-  - Fire rate is affected by the Sine of time, for good and for bad.
+  - Fire rate is affected by the Cosine of time, for good and for bad.
+  - Fire rate is further increased by Cosine of Time, but fluctuates more.
+  - Fire rate is further increased by Cosine of Time, but fluctuates more.
+  - Fire rate is further increased by Cosine of Time, but fluctuates more.
+  - Fire rate due to Cosine of Time fluctuates extremely.
   FunctionText: {fileID: 5795580368162302227}
   functions:
-  - c=c/(Cos[t]+1);
+  - c=c/(Cos[t]+0.5);
+  - c=c/(Cos[t]x2+1);
+  - c=c/(Cos[t]x4);
+  - c=c/(Cos[t]x8-2);
+  - c=c/(Cos[t]x50-35);
+  functionTransitions: 1
   SecondaryFunctionText: {fileID: 3363742322012715923}
   secondaryFunctions:
-  - You are unable to attack when (Cos[t]+1) is less than 0.1.
+  - You are unable to attack when (Cos[t]+1) is less than 0.01.
+  - You are unable to attack when (Cos[t]+1) is less than 0.01.
+  - You are unable to attack when (Cos[t]+1) is less than 0.01.
+  - You are unable to attack when (Cos[t]+1) is less than 0.01.
+  - You are unable to attack when (Cos[t]+1) is less than 0.01.
+  secondaryTransitions: 0
   CostText: {fileID: 7456935173898872362}
   costs:
   - 1
-  upgradeType: trig
-  upgradeName: power_of_sine
-  upgradeId: sin_offset
-  upgradeValue1Type: gun_power
+  - 1
+  - 5
+  - 25
+  - 100
+  upgradeType: special
+  upgradeName: speed_of_cosine
+  upgradeId: cos_speed
+  upgradeValue1Type: cos_time
   upgradeValue1Equation: add
-  upgradeValue1: []
-  upgradeValue2Type: gun_offset_quantity
+  upgradeValue1:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 50
+  upgradeValue2Type: cos_speed
   upgradeValue2Equation: add
-  upgradeValue2: []
+  upgradeValue2:
+  - 0.5
+  - 1
+  - 0
+  - -2
+  - -35
   level: 0
+  currentCost: 1
   upgrading: 0
 --- !u!114 &8991727716729372060
 MonoBehaviour:
@@ -764,7 +793,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 124795903a6174555b0cf5855b4b1b6a, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0

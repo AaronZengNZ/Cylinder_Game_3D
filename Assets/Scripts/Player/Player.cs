@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     // other
     public float prevYrotation = 0f;
     private float accelerationValue = 0f;
-    
+    public float mass = 10f;
     // Start is called before the first frame update
     void Start()
     {
@@ -90,7 +90,8 @@ public class Player : MonoBehaviour
         }
     }
     private void Rotate(){
-        //rotate cylinders x rotation to look at mouse ONLY. keep all other rotations the same
+        //do not rotate if timescale is 0
+        if(Time.timeScale <= 0.1f){return;}
         if(movingActive == false){accelerationValue = 0;}
         //point transform at lookpos
         transform.LookAt(new Vector3(mousePosInWorld.x, transform.position.y, mousePosInWorld.z));
@@ -121,7 +122,7 @@ public class Player : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1)){
             moving = !moving;
-            if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f){
+            if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f || Input.GetKeyDown(KeyCode.Space)){
                 moving = false;
                 return;
             }

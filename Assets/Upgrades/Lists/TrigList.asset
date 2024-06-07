@@ -18,5 +18,53 @@ MonoBehaviour:
   - {fileID: 8104582690537056872, guid: 8ea95e435408448c3bdfbf9d9a60702a, type: 3}
   - {fileID: 4246649282405306521, guid: 6a8551d7f33ed4b67a5fbb6474045c5a, type: 3}
   specialUpgradeLevel: 0
-  upgrades: []
-  upgradeLevels: []
+  upgrades:
+  - {fileID: 8915657044057172598, guid: 26ccacf42913946f19a802bddab22bc2, type: 3}
+  - {fileID: 1860265299415577807, guid: 207702aca21374783b4f2e1f47e0657e, type: 3}
+  - {fileID: 1255820356972299590, guid: 15a8409942f334c058adac0919716478, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  upgradeLevels:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0

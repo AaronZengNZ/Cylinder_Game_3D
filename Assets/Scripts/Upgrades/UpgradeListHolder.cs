@@ -17,14 +17,34 @@ public class UpgradeListHolder : MonoBehaviour
     void Start()
     {
         BaseListUniques();
+        BaseListSetUpgrades();
         SelectClass("trigonometry");
         SelectedClassSpecials();
         AddNewUpgradesToList(selectedClass);
     }
 
     public void UpgradeLevelUp(GameObject upgrade){
-        int index = System.Array.IndexOf(upgrades, upgrade);
+        GameObject upgradeInArray = null;
+        foreach(GameObject upgradeInList in upgrades){
+            UpgradeButton upgradeButton = upgradeInList.GetComponent<UpgradeButton>();
+            UpgradeButton upgradeButtonUpgrade = upgrade.GetComponent<UpgradeButton>();
+            if(upgradeButton.upgradeName == upgradeButtonUpgrade.upgradeName){
+                upgradeInArray = upgradeInList;
+            }
+        }
+        int index = System.Array.IndexOf(upgrades, upgradeInArray);
+        UnityEngine.Debug.Log("index = " + index);
         upgradeLevels[index]++;
+    }
+    
+    private void BaseListSetUpgrades(){
+        upgrades = baseList.upgrades;
+        upgradeLevels = baseList.upgradeLevels;
+    }
+
+    public void SpecialUpgradeLevelUp(GameObject upgrade){
+        int index = System.Array.IndexOf(upgrades, upgrade);
+        specialUpgradeLevel++;
     }
 
     private void BaseListUniques(){
@@ -37,21 +57,29 @@ public class UpgradeListHolder : MonoBehaviour
     }
 
     public void AddSpecialUpgradeToList(GameObject upgrade){
-        if(System.Array.IndexOf(specialUpgrades, upgrade) == -1){
-            GameObject[] tempSpecialUpgrades = new GameObject[specialUpgrades.Length + 1];
-            for(int i = 0; i < specialUpgrades.Length; i++){
-                tempSpecialUpgrades[i] = specialUpgrades[i];
+        GameObject upgradeInSpecialUpgradeArray = null;
+        foreach(GameObject specialUpgrade in specialUpgrades){
+            UpgradeButton upgradeButton = specialUpgrade.GetComponent<UpgradeButton>();
+            UpgradeButton upgradeButtonUpgrade = upgrade.GetComponent<UpgradeButton>();
+            if(upgradeButton.upgradeName == upgradeButtonUpgrade.upgradeName){
+                upgradeInSpecialUpgradeArray = specialUpgrade;
             }
-            tempSpecialUpgrades[specialUpgrades.Length] = upgrade;
-            specialUpgrades = tempSpecialUpgrades;
         }
+        // if(System.Array.IndexOf(specialUpgrades, upgrade) == -1){
+        //     GameObject[] tempSpecialUpgrades = new GameObject[specialUpgrades.Length + 1];
+        //     for(int i = 0; i < specialUpgrades.Length; i++){
+        //         tempSpecialUpgrades[i] = specialUpgrades[i];
+        //     }
+        //     tempSpecialUpgrades[specialUpgrades.Length] = upgradeInSpecialUpgradeArray;
+        //     specialUpgrades = tempSpecialUpgrades;
+        // }
         GameObject[] tempUpgrades = new GameObject[upgrades.Length + 1];
         float[] tempUpgradeLevels = new float[upgradeLevels.Length + 1];
         for(int i = 0; i < upgrades.Length; i++){
             tempUpgrades[i] = upgrades[i];
             tempUpgradeLevels[i] = upgradeLevels[i];
         }
-        tempUpgrades[upgrades.Length] = upgrade;
+        tempUpgrades[upgrades.Length] = upgradeInSpecialUpgradeArray;
         tempUpgradeLevels[upgradeLevels.Length] = 0f;
         upgrades = tempUpgrades;
         upgradeLevels = tempUpgradeLevels;
@@ -81,7 +109,18 @@ public class UpgradeListHolder : MonoBehaviour
         }
     }
 
+    public int GetLevelOfUpgrade(string upgradeType = "special", GameObject upgrade = null){
+        if(upgradeType == "special"){
+            return (int)specialUpgradeLevel;
+        }
+        else{
+            int index = System.Array.IndexOf(upgrades, upgrade);
+            return (int)upgradeLevels[index];
+        }
+    }
+
     public GameObject[] GetRandomUpgrades(string extra = "none", float amount = 3f){
+        UnityEngine.Debug.Log("Got " + extra + " upgrades");
         if(extra == "special"){
             return specialUpgrades;
         }

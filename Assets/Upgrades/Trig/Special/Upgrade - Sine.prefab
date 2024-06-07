@@ -676,7 +676,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: p+=5;
+  m_text: "p*=5x(Sin[\u2206t]+2);"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
@@ -1066,32 +1066,59 @@ MonoBehaviour:
   upgradeButtonManager: {fileID: 0}
   hoverOutline: {fileID: 5045101039054759219}
   animator: {fileID: 0}
-  selfPrefab: {fileID: 0}
+  selfPrefab: {fileID: 8104582690537056872}
   TitleText: {fileID: 5414174563435986201}
   title: Power of [Sines]
   titleType: <color=#FF5555>Special</color>
   DescText: {fileID: 6489146784545537322}
   descriptions:
   - Power is increased, but spread is also increased due to Sine of time.
+  - Power and spread are increased further.
+  - Power and spread are increased further.
+  - Power and spread are increased further.
+  - "Power is buffed based on Sine of [\u2206t]."
   FunctionText: {fileID: 7826958267662878688}
   functions:
-  - p+=5;
+  - p*=2;
+  - p*=3;
+  - p*=4;
+  - p*=5;
+  - "p*=5x(Sin[\u2206t]+2);"
   SecondaryFunctionText: {fileID: 7791602829305662622}
   secondaryFunctions:
   - Projectile.Import(Angle[Sin(t)]x10);
+  - Projectile.Import(Angle[Sin(t)]x20);
+  - Projectile.Import(Angle[Sin(t)]x30);
+  - Projectile.Import(Angle[Sin(t)]x40);
+  - Projectile.Import(Angle[Sin(t)]x60);
   CostText: {fileID: 52900535559130840}
   costs:
   - 1
-  upgradeType: trig
+  - 1
+  - 5
+  - 25
+  - 100
+  upgradeType: special
   upgradeName: power_of_sine
-  upgradeId: sin_offset
+  upgradeId: sin_power
   upgradeValue1Type: gun_power
-  upgradeValue1Equation: add
-  upgradeValue1: []
+  upgradeValue1Equation: multiply
+  upgradeValue1:
+  - 2
+  - 3
+  - 4
+  - 5
+  - 5
   upgradeValue2Type: gun_offset_quantity
   upgradeValue2Equation: add
-  upgradeValue2: []
+  upgradeValue2:
+  - 10
+  - 20
+  - 30
+  - 40
+  - 60
   level: 0
+  currentCost: 1
   upgrading: 0
 --- !u!114 &5899958876143207524
 MonoBehaviour:
@@ -1150,7 +1177,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 124795903a6174555b0cf5855b4b1b6a, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0

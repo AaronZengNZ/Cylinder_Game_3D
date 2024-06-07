@@ -67,9 +67,7 @@ public class ExperienceParticle : MonoBehaviour
 
     private void UpFling(){
         float randomUpFling = verticalFlingSpeed * Random.Range(0.5f, 1f);
-        UnityEngine.Debug.Log("Fling:" + randomUpFling);
         rb.velocity = new Vector3(rb.velocity.x, randomUpFling, rb.velocity.z);
-        UnityEngine.Debug.Log("Velocity 1:" + rb.velocity.y);
     }
 
     private void RandomDirection(){

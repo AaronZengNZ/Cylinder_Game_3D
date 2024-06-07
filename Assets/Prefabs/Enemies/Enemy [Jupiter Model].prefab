@@ -121,6 +121,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   anim: {fileID: 0}
   deathParticles: {fileID: 1481150905211913128, guid: 4d1f374d648d246cc9496ab208d79e60, type: 3}
+  redMaterial: {fileID: 2100000, guid: fbbbb6a6fb7d7454bbb18cf7885dfa82, type: 2}
+  grayMaterial: {fileID: 2100000, guid: 163bbe6664f6b4563bb20ef6c37c2438, type: 2}
   rb: {fileID: 0}
   moveSpeed: 3
   activationTime: 1.75
@@ -140,22 +142,14 @@ MonoBehaviour:
   - {fileID: 8887418414293301833}
   - {fileID: 8579959318912662819}
   hitpointsPerBlock: 10
-  blocksRemaining: 0
+  blocksRemaining: 12
   currentBlockHitpoints: 10
   blockDefaultSize: 0.25
-  secondaryBlockObjects:
-  - {fileID: 6879135639894437334}
-  - {fileID: 7350379789003181784}
-  - {fileID: 5916878597323522610}
-  - {fileID: 7332352718783139872}
-  blockObjectHideThresholds:
-  - 11
-  - 10
-  - 9
-  - 8
   index: 0
   movementType: chase
   enemyUpdateManager: {fileID: 0}
+  customVar: 0
+  customVar2: 0
   xpDrop: 60
   particlesDropped: 6
   xpParticle: {fileID: 4530396533856604348, guid: be3c76b558ada4f399cdf32e7e0ac660, type: 3}

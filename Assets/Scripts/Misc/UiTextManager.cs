@@ -41,6 +41,9 @@ public class UiTextManager : MonoBehaviour
         string tempGunText = "";
         string timeSinceLastFire = t[1].ToString("F2");
         string cooldown = (1f / c[0]).ToString("F2");
+        if((1f / c[0]) > 100f){
+            cooldown = "∞";
+        }
         float bulletSpeed = s[0];
         float bulletDamage = p[0];
         float bulletMass = m[0];
