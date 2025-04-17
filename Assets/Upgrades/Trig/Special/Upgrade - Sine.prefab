@@ -1076,21 +1076,23 @@ MonoBehaviour:
   - Power and spread are increased further.
   - Power and spread are increased further.
   - Power and spread are increased further.
-  - "Power is buffed based on Sine of [\u2206t]."
+  - "Power is increased based on Sine of [\u2206t]. (More deviation = more damage)"
   FunctionText: {fileID: 7826958267662878688}
   functions:
-  - p*=2;
-  - p*=3;
-  - p*=4;
-  - p*=5;
+  - p*=1.4;
+  - p*=1.8;
+  - p*=2.5;
+  - p*=3.5;
   - "p*=5x(Sin[\u2206t]+2);"
+  functionTransitions: 1
   SecondaryFunctionText: {fileID: 7791602829305662622}
   secondaryFunctions:
+  - Projectile.Import(Angle[Sin(t)]x5);
   - Projectile.Import(Angle[Sin(t)]x10);
+  - Projectile.Import(Angle[Sin(t)]x15);
   - Projectile.Import(Angle[Sin(t)]x20);
   - Projectile.Import(Angle[Sin(t)]x30);
-  - Projectile.Import(Angle[Sin(t)]x40);
-  - Projectile.Import(Angle[Sin(t)]x60);
+  secondaryTransitions: 1
   CostText: {fileID: 52900535559130840}
   costs:
   - 1
@@ -1104,20 +1106,21 @@ MonoBehaviour:
   upgradeValue1Type: gun_power
   upgradeValue1Equation: multiply
   upgradeValue1:
-  - 2
-  - 3
-  - 4
-  - 5
+  - 1.4
+  - 1.8
+  - 2.5
+  - 3.5
   - 5
   upgradeValue2Type: gun_offset_quantity
   upgradeValue2Equation: add
   upgradeValue2:
+  - 5
   - 10
+  - 15
   - 20
   - 30
-  - 40
-  - 60
   level: 0
+  maxLevel: 5
   currentCost: 1
   upgrading: 0
 --- !u!114 &5899958876143207524

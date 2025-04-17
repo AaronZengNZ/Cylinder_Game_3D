@@ -47,7 +47,7 @@ public class UiTextManager : MonoBehaviour
         float bulletSpeed = s[0];
         float bulletDamage = p[0];
         float bulletMass = m[0];
-        tempGunText += "Case[∆t("+timeSinceLastFire+")>"+cooldown+"]{Projectile(s="+bulletSpeed+", p="+bulletDamage+", m="+bulletMass+")}";
+        tempGunText += "Case[∆t("+timeSinceLastFire+")>c("+cooldown+")]{Projectile(s="+bulletSpeed+", p="+bulletDamage+", m="+bulletMass+")}";
         gunText.text = tempGunText;
     }
 }

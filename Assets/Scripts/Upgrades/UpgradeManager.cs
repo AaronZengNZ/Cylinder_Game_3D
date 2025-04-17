@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class UpgradeManager : MonoBehaviour
 {
@@ -34,15 +36,21 @@ public class UpgradeManager : MonoBehaviour
     public float cosineSpeedMult = 1f;
     public float tangentRequirement = 3f;
     public float tangentBuff = 0f;
+    public GameObject tangentAura;
     [Header ("Misc Stats")]
-    public float defenseMultiplicativeChanges = 1f;
-    public float defenseAdditiveChanges = 0f;
+    public float defenceMultiplicativeChanges = 1f;
+    public float defenceAdditiveChanges = 0f;
+    public float armorMultiplicativeChanges = 1f;
+    public float armorAdditiveChanges = 0f;
     [Header("Other (Player)")]
     public float playerSpeedAdditiveChanges = 0f;
     public float playerSpeedMultiplicativeChanges = 1f;
     public float playerMassAdditiveChanges = 0f;
     public float playerMassMultiplicativeChanges = 1f;
 
+
+    public GameObject tangentDefenceText;
+    public GameObject cosineAspdText;
     // Start is called before the first frame update
     void Start()
     {
@@ -150,8 +158,11 @@ public class UpgradeManager : MonoBehaviour
             case "player_mass":
                 playerMassAdditiveChanges += upgradeValue;
                 break;
-            case "defense":
-                defenseAdditiveChanges += upgradeValue;
+            case "defence":
+                defenceAdditiveChanges += upgradeValue;
+                break;
+            case "armor":
+                armorAdditiveChanges += upgradeValue;
                 break;
             case "tangent":
                 tangentBuff += upgradeValue;
@@ -221,8 +232,10 @@ public class UpgradeManager : MonoBehaviour
         playerMassMultiplicativeChanges = 1f;
         playerSpeedAdditiveChanges = 0f;
         playerSpeedMultiplicativeChanges = 1f;
-        defenseAdditiveChanges = 0f;
-        defenseMultiplicativeChanges = 1f;
+        defenceAdditiveChanges = 0f;
+        defenceMultiplicativeChanges = 1f;
+        armorAdditiveChanges = 0f;
+        armorMultiplicativeChanges = 1f;
         tangentBuff = 0f;
         tangentRequirement = 0f;
     }
@@ -233,9 +246,7 @@ public class UpgradeManager : MonoBehaviour
         SimulateUpgradeAllStats();
         float newFirerateMultiplicativeChanges = firerateMultiplicativeChanges;
         newFirerateMultiplicativeChanges = newFirerateMultiplicativeChanges * CosSpeed();
-        if(TanCheck()){
-            defenseAdditiveChanges += tangentBuff;
-        }
+        TangentUpgradeCheck();
         statsManager.UpdateStatCalculation("firerate", firerateAdditiveChanges, newFirerateMultiplicativeChanges);
         statsManager.UpdateStatCalculation("damage", damageAdditiveChanges, damageMultiplicativeChanges);
         statsManager.UpdateStatCalculation("pierce", pierceAdditiveChanges, pierceMultiplicativeChanges);
@@ -245,11 +256,27 @@ public class UpgradeManager : MonoBehaviour
         statsManager.UpdateStatCalculation("gunOffsetQuantity", gunOffsetQuantityChanges);
         statsManager.UpdateStatCalculation("playerSpeed", playerSpeedAdditiveChanges, playerSpeedMultiplicativeChanges);
         statsManager.UpdateStatCalculation("playerMass", playerMassAdditiveChanges, playerMassMultiplicativeChanges);
-        statsManager.UpdateStatCalculation("defense", defenseAdditiveChanges, defenseMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("defence", defenceAdditiveChanges, defenceMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("armor", armorAdditiveChanges, armorMultiplicativeChanges);
+    }
+
+    private void TangentUpgradeCheck(){
+        if(tangentBuff > 0){
+            tangentDefenceText.SetActive(true);
+            tangentDefenceText.GetComponent<TextMeshProUGUI>().text = "<color=#FF5555>Case[Tan[t]>"+tangentRequirement+"]<color=\"white\">{d=d+"+tangentBuff+"}("+TanCheck()+")";
+            if(TanCheck()){
+                defenceAdditiveChanges += tangentBuff;
+                tangentAura.GetComponent<Animator>().SetBool("Show", true);
+            }else{
+                tangentAura.GetComponent<Animator>().SetBool("Show", false);
+            }
+        }else{
+            tangentDefenceText.SetActive(false);
+        }
     }
 
     private bool TanCheck(){
-        float tangent = Mathf.Tan(Time.time);
+        float tangent = Mathf.Tan(Time.time / 2f);
         if(tangent > tangentRequirement){
             return true;
         }
@@ -258,12 +285,15 @@ public class UpgradeManager : MonoBehaviour
 
     private float CosSpeed(){
         if(cosineTimeMult == 0f){
+            cosineAspdText.SetActive(false);
             return 1f;
         }
         float value = Mathf.Sin(Time.time) * cosineTimeMult + cosineSpeedMult;
         if(value <= 0.01){
             value = 0;
         }
+        cosineAspdText.SetActive(true);
+        cosineAspdText.GetComponent<TextMeshProUGUI>().text = "c=c/<color=#FF5555>[Cos[t]x"+cosineTimeMult+(cosineSpeedMult-1).ToString("+0;-#")+"]<color=\"white\">("+value.ToString("F2")+")";
         return value;
     }
 }

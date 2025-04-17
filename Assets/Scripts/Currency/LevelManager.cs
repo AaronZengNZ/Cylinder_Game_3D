@@ -39,21 +39,26 @@ public class LevelManager : MonoBehaviour
         if(xp < xpPerUP * 3f){
             yield return new WaitForSecondsRealtime(0.2f);
         }
-        else if(xp  < xpPerUP * 20f){
-            yield return new WaitForSecondsRealtime(0.2f - (xp / (xpPerUP * 10f)) * 0.19f);
+        else if(xp < xpPerUP * 20f){
+            yield return new WaitForSecondsRealtime(0.2f - (xp / (xpPerUP * 20f)) * 0.18f);
         }
         else{
-            yield return new WaitForSecondsRealtime(0.01f);
+            yield return new WaitForSecondsRealtime(0.001f);
         }
         levelUpParticles.Play();
         float tempAnimationTime = upgradeAnimationTime;
         if(xp < xpPerUP * 3f){
-            yield return new WaitForSeconds(upgradeAnimationTime);
+            yield return new WaitForSecondsRealtime(upgradeAnimationTime);
         }
         xpBarValue = 0f;
         xp -= xpPerUP;
         upgradePoints++;
-        yield return new WaitForSecondsRealtime(xpPerUP / (xp + xpPerUP) * upgradeCooldownTime + 0.01f);
+        if(xp > xpPerUP * 50f){
+            int levelsToAdd = Mathf.FloorToInt(xp / xpPerUP / 50);
+            xp -= xpPerUP * levelsToAdd;
+            upgradePoints += levelsToAdd;
+        }
+        yield return new WaitForSecondsRealtime(xpPerUP / (xp + xpPerUP) * upgradeCooldownTime + 0.001f);
         upgrading = false;
     }
 
@@ -92,11 +97,13 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator MenuTransition(){
         Time.timeScale = 0.75f;
-        yield return new WaitForSecondsRealtime(1f);
+        yield return new WaitForSecondsRealtime(0.25f);
         if(upgradeMenuShowing){
             Time.timeScale = 0f;
+            yield return new WaitForSecondsRealtime(0.9f);
         }
         else{
+            yield return new WaitForSecondsRealtime(0.9f);
             Time.timeScale = 1f;
         }
         menuTransition = false;

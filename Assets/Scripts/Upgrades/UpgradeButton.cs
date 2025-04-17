@@ -41,6 +41,7 @@ public class UpgradeButton : MonoBehaviour
     public string upgradeValue2Equation = "add";
     public float[] upgradeValue2;
     public int level = 0;
+    public int maxLevel = 5;
     public float currentCost = 1f;
     public bool upgrading = false;
     

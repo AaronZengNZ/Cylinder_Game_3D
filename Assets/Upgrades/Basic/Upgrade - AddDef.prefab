@@ -118,29 +118,29 @@ MonoBehaviour:
   titleType: <color=#DDDDDD>Basic
   DescText: {fileID: 6600391162757065840}
   descriptions:
-  - Your defense is increased by a sliver, additively.
-  - Your defense is increased slightly, additively.
-  - Your defense is increased mediocrely, additively.
-  - Your defense is increased largely, additively.
-  - Your defense is increased significantly, additively.
-  - Your defense is increased massively, additively.
+  - Your defense and armor is increased by a sliver, additively.
+  - Your defense and amor is increased slightly, additively.
+  - Your defense and armor is increased mediocrely, additively.
+  - Your defense and armor is increased largely, additively.
+  - Your defense and armor is increased significantly, additively.
+  - Your defense and armor is increased massively, additively.
   FunctionText: {fileID: 9214843971941419220}
   functions:
   - d+=1;
   - d+=2;
-  - d+=4;
-  - d+=7;
+  - d+=5;
   - d+=10;
-  - d+=15;
+  - d+=20;
+  - d+=50;
   functionTransitions: 1
   SecondaryFunctionText: {fileID: 4759878043529712508}
   secondaryFunctions:
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - a+=15%;
+  - a+=30%;
+  - a+=40%;
+  - a+=50%;
+  - a+=60%;
+  - a+=65%;
   secondaryTransitions: 1
   CostText: {fileID: 3427459228126452786}
   costs:
@@ -158,14 +158,21 @@ MonoBehaviour:
   upgradeValue1:
   - 1
   - 2
-  - 4
-  - 7
+  - 5
   - 10
+  - 20
+  - 50
+  upgradeValue2Type: armor
+  upgradeValue2Equation: add
+  upgradeValue2:
   - 15
-  upgradeValue2Type: null
-  upgradeValue2Equation: nuh uh
-  upgradeValue2: []
+  - 30
+  - 40
+  - 50
+  - 60
+  - 65
   level: 0
+  maxLevel: 5
   currentCost: 1
   upgrading: 0
 --- !u!114 &1775234956192259940

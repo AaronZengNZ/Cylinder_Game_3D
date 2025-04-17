@@ -11,6 +11,12 @@ public class EnemyCreator : MonoBehaviour
     public float slotsToInstantiate = 12f;
     public float slotsFilled = 0f;
     private bool instantiating = false;
+    public CubeSpawner cubeSpawner;
+
+    void Start(){
+        cubeSpawner = GameObject.Find("CubeSpawner").GetComponent<CubeSpawner>();
+    }
+
     public Transform getSlot(GameObject newObject){
         if(slotsTakenUp >= slotsToInstantiate || instantiating){
             return null;
@@ -62,6 +68,11 @@ public class EnemyCreator : MonoBehaviour
             }
             StartCoroutine(UnInstantiate());
             GameObject newEnemy = Instantiate(enemyToInstantiate, transform.position, transform.rotation);
+            newEnemy.GetComponent<Enemy>().hitpointsPerBlock = cubeSpawner.cubeHp;
+            newEnemy.GetComponent<Enemy>().xpDrop *= cubeSpawner.xpMultiplier;
+            newEnemy.GetComponent<Enemy>().particlesDropped += Mathf.Pow(cubeSpawner.difficulty, 1.5f);
+            newEnemy.GetComponent<Enemy>().aliveMaterial = cubeSpawner.GetMaterialForDifficulty();
+            newEnemy.GetComponent<Enemy>().attackDamage *= cubeSpawner.damageMultiplier;
         }
     }
 

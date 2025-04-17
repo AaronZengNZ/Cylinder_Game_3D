@@ -175,7 +175,8 @@ public class CubeComponentManager : MonoBehaviour
         return 0;
     }
 
-    public void ComponentDestroyed(float index){
+    public void ComponentDestroyed(float index)
+    {
         cubeComponents[(int)index - 1] = null;
     }
 

@@ -1328,7 +1328,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.55, y: 1, z: 0.55}
+  m_Size: {x: 0.8, y: 1, z: 0.8}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &7954726299364440954
 Rigidbody:
@@ -1371,7 +1371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   anim: {fileID: 1817985370540279271}
   deathParticles: {fileID: 1481150905211913128, guid: 4d1f374d648d246cc9496ab208d79e60, type: 3}
-  redMaterial: {fileID: 2100000, guid: fbbbb6a6fb7d7454bbb18cf7885dfa82, type: 2}
+  aliveMaterial: {fileID: 0}
   grayMaterial: {fileID: 2100000, guid: 163bbe6664f6b4563bb20ef6c37c2438, type: 2}
   rb: {fileID: 0}
   moveSpeed: 1
@@ -1400,9 +1400,14 @@ MonoBehaviour:
   xpDrop: 40
   particlesDropped: 4
   xpParticle: {fileID: 4530396533856604348, guid: be3c76b558ada4f399cdf32e7e0ac660, type: 3}
+  healDrop: 10
+  healingParticle: {fileID: 4530396533856604348, guid: a4705827c47234238b50035448506e91, type: 3}
   dead: 0
-  attackDamage: 10
+  attackType: ranged
+  attackDamage: 25
+  attackCooldown: 1
   rangedWeapon: {fileID: 8893159830029592416, guid: 05f33c553733b4783b10639bdc0227ef, type: 3}
+  collision: 0
 --- !u!65 &2335511985735024730
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1422,5 +1427,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.55, y: 1, z: 0.55}
+  m_Size: {x: 0.6, y: 1, z: 0.6}
   m_Center: {x: 0, y: 0, z: 0}

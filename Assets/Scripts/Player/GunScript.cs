@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GunScript : MonoBehaviour
 {
@@ -84,10 +86,12 @@ public class GunScript : MonoBehaviour
     private void Shoot(){
         if(movingActive == true){return;}
         timeSinceLastFire = 0f;
-        CinemachineShake.Instance.ShakeCamera(gunScreenShake, gunScreenShakeTime);
+        //CinemachineShake.Instance.ShakeCamera(gunScreenShake, gunScreenShakeTime);
         GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
         BulletScript bulletScript = bullet.GetComponent<BulletScript>();
-        bulletScript.yDirection = prevYrotation + gunOffsetAngle;
+        float randomOffset = Random.Range(-(Mathf.Pow(firerate, 0.6f) / 5f), (Mathf.Pow(firerate, 0.6f) / 5f));
+
+        bulletScript.yDirection = prevYrotation + gunOffsetAngle + randomOffset;
         bulletScript.damage = bulletDamage;
         bulletScript.speed = bulletSpeed;
         bulletScript.pierce = pierce;

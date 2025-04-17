@@ -101,6 +101,12 @@ public class UpgradeListHolder : MonoBehaviour
         list.upgradeLevels = tempUpgradeLevels;
     }
 
+    public void RemoveUpgradeFromList(GameObject Upgrade){
+        //remove the upgrade from the baselist.
+        GameObject[] tempUpgrades = new GameObject[upgrades.Length - 1];
+        float[] tempUpgradeLevels = new float[upgradeLevels.Length - 1];
+    }
+
     public void SelectClass(string className){
         foreach(UpgradeList list in upgradeLists){
             if(list.className == className){
@@ -159,9 +165,21 @@ public class UpgradeListHolder : MonoBehaviour
         //get a random upgrade from the list of upgrades. repeat until it is not in the selected upgrades list
         GameObject selectedUpgrade = upgrades[Random.Range(0, upgrades.Length)];
         int iterations = 0;
-        while(System.Array.IndexOf(selectedUpgrades, selectedUpgrade) != -1){
-            selectedUpgrade = upgrades[Random.Range(0, upgrades.Length)];
+        bool whileCheck = true;
+        while(whileCheck){
+            int index = Random.Range(0, upgrades.Length);
+            selectedUpgrade = upgrades[index];
             iterations++;
+            whileCheck = System.Array.IndexOf(selectedUpgrades, selectedUpgrade) != -1;
+            UpgradeButton tempBtn = selectedUpgrade.GetComponent<UpgradeButton>();
+            if(tempBtn.upgradeType == "special"){
+                if(specialUpgradeLevel >= tempBtn.maxLevel){
+                    whileCheck = true;
+                }
+            }
+            else if(upgradeLevels[index] >= tempBtn.maxLevel){
+                whileCheck = true;
+            }
             if(iterations > 100){
                 return null;
                 break;

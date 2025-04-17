@@ -14,6 +14,8 @@ public class CustomAttack : MonoBehaviour
     public float damage = 10f;
     public float yPos = 1f;
     public Transform player;
+    public GameObject parent;
+    private bool hit = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,12 +38,13 @@ public class CustomAttack : MonoBehaviour
         attackIndicator.gameObject.SetActive(true);
         //slide the slider from 0 to 1
         float time = 0;
-        while(time < indicationDuration / 2){
+        while(time < indicationDuration){
             time += Time.deltaTime;
-            attackIndicator.value = time / (indicationDuration / 2);
+            if(time > indicationDuration / 2){attackIndicator.value = 1;}
+            else{attackIndicator.value = time / (indicationDuration / 2);}
+            if(parent == null){Destroy(gameObject);}
             yield return null;
         }
-        yield return new WaitForSeconds(indicationDuration / 2);
         Attack();
         //slide the slider back
         time = 0;
@@ -60,8 +63,10 @@ public class CustomAttack : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
+        if(hit){return;}
         if(other.tag == "Player"){
-            //other.GetComponent<PlayerHealth>().TakeDamage(damage);
+            other.GetComponent<PlayerHealth>().TakeDamage(damage);
+            hit = true;
         }
     }
 }

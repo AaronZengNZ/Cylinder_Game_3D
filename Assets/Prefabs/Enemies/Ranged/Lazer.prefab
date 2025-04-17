@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 3000, y: 160}
+  m_SizeDelta: {x: 5000, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2542514658773554671
 MonoBehaviour:
@@ -117,7 +117,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1792254424313554423}
   m_LocalRotation: {x: -0.70710576, y: -0, z: -0, w: 0.70710784}
-  m_LocalPosition: {x: 0, y: 0, z: 15}
+  m_LocalPosition: {x: 0, y: 0, z: 25}
   m_LocalScale: {x: 0.01, y: 0.01, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -257,7 +257,7 @@ RectTransform:
   m_Father: {fileID: 1139810038574974699}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.864, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -965,7 +965,7 @@ ParticleSystem:
     enabled: 1
     type: 8
     angle: 0
-    length: 30
+    length: 50
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
@@ -1279,7 +1279,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 600
+        scalar: 1000
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -5226,8 +5226,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8001257439475209743}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.864, y: 0}
-  m_AnchorMax: {x: 0.864, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5471,9 +5471,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 30
+  m_Height: 50
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 15}
+  m_Center: {x: 0, y: 0, z: 25}
 --- !u!114 &6542456118352530180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5495,3 +5495,4 @@ MonoBehaviour:
   damage: 10
   yPos: 1
   player: {fileID: 0}
+  parent: {fileID: 0}

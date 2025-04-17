@@ -19,16 +19,21 @@ public class Player : MonoBehaviour
     [Header("Cylinder")]
     public GameObject cylinder;
     public Vector3 cylinderRotationalOffset;
+    public CapsuleCollider capsuleCollider;
     // other
     public float prevYrotation = 0f;
     private float accelerationValue = 0f;
     public float mass = 10f;
+    public GameObject auras;
+
+    float stasisWindup = 0.3f;
+    bool hitWall = false;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        
+        capsuleCollider = GetComponent<CapsuleCollider>();
     }
 
     void Update(){
@@ -49,6 +54,7 @@ public class Player : MonoBehaviour
             }
         }
         cursorLocation.position = mousePosInWorld;
+        hitWall = false;
         //case another ray from the player's position to the mouse position
         if(hitVoid){
             Vector3 tempMousePosInWorld = mousePosInWorld;
@@ -58,6 +64,10 @@ public class Player : MonoBehaviour
             //cast a raycast from playerPosition to mousePosInWorld
             if(Physics.Raycast(transform.position, mousePosInWorld - transform.position, out hit, 1000, LayerMask.GetMask("Wall"))){
                 mousePosInWorld = hit.point;
+                if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f){
+                    hitWall = true;
+                    return;
+                }
             }
         }
         finalCursorLocation.position = mousePosInWorld;
@@ -72,14 +82,23 @@ public class Player : MonoBehaviour
     private void Movement(){
         if(movingActive){
             if(moving){
+                if(GetVector2Distance(transform.position, mousePosInWorld) < 1f){
+                    stasisWindup -= Time.deltaTime;
+                    if(hitWall){
+                        stasisWindup = 0;
+                    }
+                }else{
+                    stasisWindup = 0.3f;
+                }
+                if(stasisWindup <= 0){
+                    moving = false;
+                    rb.velocity = Vector3.zero;
+                    return;
+                }
+
                 //instead of using transform.forward, use prevYrotation
                 Vector3 moveDirection = new Vector3(Mathf.Sin(prevYrotation * Mathf.Deg2Rad), 0, Mathf.Cos(prevYrotation * Mathf.Deg2Rad));
                 rb.velocity = -moveDirection * speed * (1 + accelerationValue*0.5f);
-                
-                //if close enough to mouse
-                if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f){
-                    moving = false;
-                }
             }
             else{
                 rb.velocity = Vector3.zero;
@@ -99,6 +118,9 @@ public class Player : MonoBehaviour
         //float newYrotation = transform.eulerAngles.y;
         //prevYrotation = ChangeTowardsValue(prevYrotation, newYrotation, tempRotSpeed);
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, prevYrotation, transform.eulerAngles.z);
+
+        //rotate the auras to make them not rotate with the player (make them face the same direction)
+        auras.transform.eulerAngles = new Vector3(0, 0, 0);
     }
 
     private float CalculateAngle(Vector2 t1, Vector2 t2){
@@ -120,9 +142,9 @@ public class Player : MonoBehaviour
         if(accelerationValue > 1){
             accelerationValue = 1;
         }
-        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1)){
+        if(Input.GetMouseButtonDown(1)){
             moving = !moving;
-            if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f || Input.GetKeyDown(KeyCode.Space)){
+            if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f){
                 moving = false;
                 return;
             }
@@ -132,10 +154,14 @@ public class Player : MonoBehaviour
 
     public void SetActiveMovingTrue(){
         movingActive = true;
+        capsuleCollider.direction = 0;
+        capsuleCollider.center = new Vector3(0, -0.125f, 0);
     }
 
     public void SetActiveMovingFalse(){
         movingActive = false;
+        capsuleCollider.direction = 1;
+        capsuleCollider.center = new Vector3(0, 0, 0);
     }
 
     private float GetVector2Distance(Vector3 v1, Vector3 v2)

@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,18 +55,39 @@ public class EnemyUpdateManager : MonoBehaviour
                 rbs[realIndex].velocity = Vector3.zero;
                 return;
             }
+            float movementStrength = 5f;
+            if(enemies[realIndex].GetComponent<Enemy>().collision == true){
+                float temp = 1 - Mathf.Pow(Time.deltaTime * 35f, 2f);
+                if(temp < 0){
+                    temp = 0;
+                }
+                rbs[realIndex].velocity *= temp;
+                return;
+            }
+            else{
+                movementStrength = 5f;
+            }
             switch (currentMovementType)
             {
                 case "chase":
-                    rbs[realIndex].velocity = direction.normalized * movementSpeeds[realIndex];
+                    rbs[realIndex].velocity += direction.normalized * movementSpeeds[realIndex] * Time.deltaTime * movementStrength;
+                    if(rbs[realIndex].velocity.magnitude > movementSpeeds[realIndex]){
+                        rbs[realIndex].velocity = new Vector3(Mathf.Clamp(rbs[realIndex].velocity.x, -movementSpeeds[realIndex], movementSpeeds[realIndex]), 0, Mathf.Clamp(rbs[realIndex].velocity.z, -movementSpeeds[realIndex], movementSpeeds[realIndex]));
+                    }
                     break;
                 case "stalk":
                     float distance = Vector3.Distance(player.position, enemies[realIndex].transform.position);
                     if(distance < customVar1[realIndex]){
-                        rbs[realIndex].velocity = -direction.normalized * movementSpeeds[realIndex];
+                        rbs[realIndex].velocity += -direction.normalized * movementSpeeds[realIndex] * Time.deltaTime * 5f;
+                        if(rbs[realIndex].velocity.magnitude > movementSpeeds[realIndex]){
+                            rbs[realIndex].velocity = new Vector3(Mathf.Clamp(rbs[realIndex].velocity.x, -movementSpeeds[realIndex], movementSpeeds[realIndex]), 0, Mathf.Clamp(rbs[realIndex].velocity.z, -movementSpeeds[realIndex], movementSpeeds[realIndex]));
+                        }
                     }
                     else if(distance > customVar2[realIndex]){
-                        rbs[realIndex].velocity = direction.normalized * movementSpeeds[realIndex];
+                        rbs[realIndex].velocity += direction.normalized * movementSpeeds[realIndex] * Time.deltaTime * 5f;
+                        if(rbs[realIndex].velocity.magnitude > movementSpeeds[realIndex]){
+                            rbs[realIndex].velocity = new Vector3(Mathf.Clamp(rbs[realIndex].velocity.x,-movementSpeeds[realIndex],movementSpeeds[realIndex]), 0, Mathf.Clamp(rbs[realIndex].velocity.z, -movementSpeeds[realIndex], movementSpeeds[realIndex]));
+                        }
                     }
                     else{
                         rbs[realIndex].velocity = Vector3.zero;

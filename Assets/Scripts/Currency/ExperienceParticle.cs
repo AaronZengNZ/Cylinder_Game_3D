@@ -34,6 +34,8 @@ public class ExperienceParticle : MonoBehaviour
     private bool canPickup = false;
     private bool collected = false;
     private float randomScale;
+
+    public float healValue = 0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -59,7 +61,7 @@ public class ExperienceParticle : MonoBehaviour
         //set random scale
         randomScale = Random.Range(minSize, maxSize);
        //increase randomScale by the square root of experience value / 10
-        randomScale += Mathf.Sqrt((Mathf.Sqrt(experienceValue) / 10 - 0.1f) / 2.5f + 1) - 1;
+        randomScale += (Mathf.Sqrt((Mathf.Pow(experienceValue, 0.4f) / 10 - 0.1f) / 2.5f + 1) - 1) * Random.Range(0.7f, 1.1f);
         transform.localScale = new Vector3(randomScale, randomScale, randomScale);
         //set random rotation
         transform.rotation = Quaternion.Euler(Random.Range(0f, 360f), Random.Range(0f, 360f), Random.Range(0f, 360f));
@@ -120,13 +122,19 @@ public class ExperienceParticle : MonoBehaviour
         rb.velocity = new Vector3(Mathf.Cos(directionAngle * Mathf.Deg2Rad) * speed, rb.velocity.y, Mathf.Sin(directionAngle * Mathf.Deg2Rad) * speed);
     }
 
-    private void CheckPickupRange(){
-        if(canPickup == false){return;}
+    private void CheckPickupRange()
+    {
+        if (canPickup == false) { return; }
         float distance = 0f;
         Vector2 playerPos = new Vector2(player.transform.position.x, player.transform.position.z);
         Vector2 particlePos = new Vector2(transform.position.x, transform.position.z);
         distance = Vector2.Distance(playerPos, particlePos);
-        if(distance <= pickupRadius){
+        if (distance <= pickupRadius)
+        {
+            idle = false;
+        }
+        if (pickupRadius == 0f)
+        {
             idle = false;
         }
     }
@@ -139,6 +147,11 @@ public class ExperienceParticle : MonoBehaviour
             distance = Vector2.Distance(playerPos, particlePos);
             if(distance <= speed * Time.deltaTime * 2f){
                 levelManager.GetXp(experienceValue);
+
+                if (healValue > 0)
+                {
+                    player.GetComponent<PlayerHealth>().Heal(healValue);
+                }
                 collected = true;
                 StartCoroutine(CollectAndDestroy());
             }

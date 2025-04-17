@@ -697,15 +697,15 @@ MonoBehaviour:
   - c=c/(Cos[t]x2+1);
   - c=c/(Cos[t]x4);
   - c=c/(Cos[t]x8-2);
-  - c=c/(Cos[t]x50-35);
+  - c=c/(Cos[t]x50-25);
   functionTransitions: 1
   SecondaryFunctionText: {fileID: 3363742322012715923}
   secondaryFunctions:
+  - You are unable to attack when (Cos[t]+0.5) is less than 0.01.
   - You are unable to attack when (Cos[t]+1) is less than 0.01.
-  - You are unable to attack when (Cos[t]+1) is less than 0.01.
-  - You are unable to attack when (Cos[t]+1) is less than 0.01.
-  - You are unable to attack when (Cos[t]+1) is less than 0.01.
-  - You are unable to attack when (Cos[t]+1) is less than 0.01.
+  - You are unable to attack when (Cos[t]) is less than 0.01.
+  - You are unable to attack when (Cos[t]-2) is less than 0.01.
+  - You are unable to attack when (Cos[t]-25) is less than 0.01.
   secondaryTransitions: 0
   CostText: {fileID: 7456935173898872362}
   costs:
@@ -732,8 +732,9 @@ MonoBehaviour:
   - 1
   - 0
   - -2
-  - -35
+  - -25
   level: 0
+  maxLevel: 5
   currentCost: 1
   upgrading: 0
 --- !u!114 &8991727716729372060

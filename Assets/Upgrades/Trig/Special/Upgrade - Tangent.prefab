@@ -344,25 +344,25 @@ MonoBehaviour:
   DescText: {fileID: 4373787503265560300}
   descriptions:
   - Obtain large amounts of defence at times, based on Tangent of time.
-  - Your defence is boosted even more at certain intervals, which are also longer.
-  - Your defence is boosted even more at certain intervals, which are also longer.
-  - Your defence is boosted even more at certain intervals, which are also longer.
-  - Damage blocked is reflected back at enemies.
+  - Your defence is boosted even more at certain (longer) intervals.
+  - Your defence is boosted even more at certain (longer) intervals.
+  - Your defence is boosted even more at certain (longer) intervals.
+  - More defense, longer. You now also reflect damage when in stasis.
   FunctionText: {fileID: 5643628672790384016}
   functions:
-  - Case[Tan[t]>3] {d=d+10}
-  - Case[Tan[t]>2] {d=d+20}
-  - Case[Tan[t]>1] {d=d+40}
-  - Case[Tan[t]>0.5] {d=d+70}
-  - Case[Tan[t]>0] {d=d+100}
+  - Case[Tan[t]>1] {d=d+5}
+  - Case[Tan[t]>0.5] {d=d+10}
+  - Case[Tan[t]>0] {d=d+20}
+  - Case[Tan[t]>-0.5] {d=d+100}
+  - Case[Tan[t]>-1] {d=d+250}
   functionTransitions: 1
   SecondaryFunctionText: {fileID: 952803958743969816}
   secondaryFunctions:
-  - 'Summary: Your defence is boosted around 10% of the time.'
-  - 'Summary: Your defence is boosted around 15% of the time.'
-  - 'Summary: Your defence is boosted around 25% of the time.'
-  - 'Summary: Your defence is boosted around 36% of the time.'
-  - Player.Import(BlockReflect[enemy.p]); (Boosted 50%)
+  - Your defence is boosted around 25% of the time.
+  - Your defence is boosted around 36% of the time.
+  - Your defence is boosted around 50% of the time.
+  - Your defence is boosted around 64% of the time.
+  - Your defence is boosted around 75% of the time.
   secondaryTransitions: 0
   CostText: {fileID: 4709073186785599339}
   costs:
@@ -377,20 +377,21 @@ MonoBehaviour:
   upgradeValue1Type: tangent
   upgradeValue1Equation: add
   upgradeValue1:
+  - 5
   - 10
-  - 20
-  - 40
-  - 70
+  - 25
   - 100
+  - 250
   upgradeValue2Type: tangentReq
   upgradeValue2Equation: add
   upgradeValue2:
-  - 3
-  - 2
   - 1
   - 0.5
   - 0
+  - -0.5
+  - -1
   level: 0
+  maxLevel: 5
   currentCost: 1
   upgrading: 0
 --- !u!114 &5896286591669448591
