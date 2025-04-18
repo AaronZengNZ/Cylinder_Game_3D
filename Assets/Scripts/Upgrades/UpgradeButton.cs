@@ -44,6 +44,12 @@ public class UpgradeButton : MonoBehaviour
     public int maxLevel = 5;
     public float currentCost = 1f;
     public bool upgrading = false;
+
+    public string specialUpgradeType = "none";
+    public bool specialUpgradeOnLevel1 = false;
+    public bool specialUpgradeOnMaxLevel = false;
+
+    public float upgradeCostMultiplier = 1f;
     
     void Start(){
         upgradeManager = GameObject.Find("UpgradeManager").GetComponent<UpgradeManager>();
@@ -54,7 +60,7 @@ public class UpgradeButton : MonoBehaviour
     }
 
     public void UpdateCost(float multiplier){
-        currentCost = Mathf.Round(costs[level] * multiplier);
+        currentCost = Mathf.Round(costs[level] * multiplier) * upgradeCostMultiplier;
         CostText.text = "Cost: " + currentCost.ToString() + " UP";
     }
 
@@ -96,10 +102,20 @@ public class UpgradeButton : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void UpgradeSuccess(){
-        upgradeManager.NewUpgrade(upgradeType, upgradeName, upgradeId, upgradeValue1Type, 
+    public void UpgradeSuccess()
+    {
+        upgradeManager.NewUpgrade(upgradeType, upgradeName, upgradeId, upgradeValue1Type,
         upgradeValue1Equation, upgradeValue1[level], upgradeValue2Type, upgradeValue2Equation, upgradeValue2[level]);
         upgradeButtonManager.UpgradeFinished();
+        if(level == 0 && specialUpgradeOnLevel1)
+        {
+            upgradeManager.AddSpecialUpgradeValue(specialUpgradeType, "one");
+        }
+        if (level == maxLevel - 1 && specialUpgradeOnMaxLevel)
+        {
+            upgradeManager.AddSpecialUpgradeValue(specialUpgradeType, "max");
+        }
+
         CancelUpgrade();
     }
 

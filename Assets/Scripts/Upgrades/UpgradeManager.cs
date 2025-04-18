@@ -45,9 +45,13 @@ public class UpgradeManager : MonoBehaviour
     [Header("Other (Player)")]
     public float playerSpeedAdditiveChanges = 0f;
     public float playerSpeedMultiplicativeChanges = 1f;
-    public float playerMassAdditiveChanges = 0f;
-    public float playerMassMultiplicativeChanges = 1f;
+    public float playerHpAdditiveChanges = 0f;
+    public float playerHpMultiplicativeChanges = 1f;
 
+    [Header("Special Upgrades")]
+    public float theoryUpgradesGot = 0f;
+    public bool tangentMaxed = false;
+    public float pythagorasLimitationAngles = 0f;
 
     public GameObject tangentDefenceText;
     public GameObject cosineAspdText;
@@ -55,6 +59,8 @@ public class UpgradeManager : MonoBehaviour
     void Start()
     {
         ResetVariablesToZero();
+        tangentMaxed = false;
+        pythagorasLimitationAngles = 0f;
     }
 
     public void NewUpgrade(string upgradeType, string upgradeName, string upgradeId, 
@@ -92,7 +98,31 @@ public class UpgradeManager : MonoBehaviour
         }
     }
 
-    private void AddUpgradeToArray(SpecialUpgradeSimulator upgrade){
+    public void AddSpecialUpgradeValue(string upgradeName, string check)
+    {
+        switch (upgradeName)
+        {
+            case "pythagoras":
+                if (check == "one")
+                {
+                    pythagorasLimitationAngles = 90f;
+                }
+                else if (check == "max")
+                {
+                    pythagorasLimitationAngles = 45f;
+                }
+                break;
+            case "tangent":
+                if (check == "max")
+                {
+                    tangentMaxed = true;
+                }
+                break;
+        }
+    }
+
+    private void AddUpgradeToArray(SpecialUpgradeSimulator upgrade)
+    {
         List<SpecialUpgradeSimulator> upgradeList = new List<SpecialUpgradeSimulator>(upgradeSimulators);
         upgradeList.Add(upgrade);
         upgradeSimulators = upgradeList.ToArray();
@@ -127,7 +157,8 @@ public class UpgradeManager : MonoBehaviour
     }
 
     private void UpgradeValueHandlerAdditive(string upgradeType, float upgradeValue){
-        switch (upgradeType){
+        switch (upgradeType)
+        {
             case "gun_firerate":
                 firerateAdditiveChanges += upgradeValue;
                 break;
@@ -155,8 +186,8 @@ public class UpgradeManager : MonoBehaviour
             case "player_speed":
                 playerSpeedAdditiveChanges += upgradeValue;
                 break;
-            case "player_mass":
-                playerMassAdditiveChanges += upgradeValue;
+            case "player_hitpoints":
+                playerHpAdditiveChanges += upgradeValue;
                 break;
             case "defence":
                 defenceAdditiveChanges += upgradeValue;
@@ -169,6 +200,9 @@ public class UpgradeManager : MonoBehaviour
                 break;
             case "tangentReq":
                 tangentRequirement += upgradeValue;
+                break;
+            case "movement_angle":
+                pythagorasLimitationAngles += upgradeValue;
                 break;
         }
     }
@@ -199,8 +233,8 @@ public class UpgradeManager : MonoBehaviour
             case "player_speed":
                 playerSpeedMultiplicativeChanges *= upgradeValue;
                 break;
-            case "player_mass":
-                playerMassMultiplicativeChanges *= upgradeValue;
+            case "player_hitpoints":
+                playerHpMultiplicativeChanges *= upgradeValue;
                 break;
         }
     }
@@ -212,7 +246,8 @@ public class UpgradeManager : MonoBehaviour
         }
     }
 
-    private void ResetVariablesToZero(){
+    private void ResetVariablesToZero()
+    {
         //TRY TO FIND SOME WAY TO DO THIS WITH A LIST OR SOMETHING
         firerateAdditiveChanges = 0f;
         firerateMultiplicativeChanges = 1f;
@@ -228,8 +263,8 @@ public class UpgradeManager : MonoBehaviour
         gunOffsetQuantityChanges = 0f;
         cosineTimeMult = 0f;
         cosineSpeedMult = 1f;
-        playerMassAdditiveChanges = 0f;
-        playerMassMultiplicativeChanges = 1f;
+        playerHpAdditiveChanges = 0f;
+        playerHpMultiplicativeChanges = 1f;
         playerSpeedAdditiveChanges = 0f;
         playerSpeedMultiplicativeChanges = 1f;
         defenceAdditiveChanges = 0f;
@@ -255,7 +290,7 @@ public class UpgradeManager : MonoBehaviour
         statsManager.UpdateStatCalculation("gunOffsetSpeed", gunOffsetSpeedChanges);
         statsManager.UpdateStatCalculation("gunOffsetQuantity", gunOffsetQuantityChanges);
         statsManager.UpdateStatCalculation("playerSpeed", playerSpeedAdditiveChanges, playerSpeedMultiplicativeChanges);
-        statsManager.UpdateStatCalculation("playerMass", playerMassAdditiveChanges, playerMassMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("playerHp", playerHpAdditiveChanges, playerHpMultiplicativeChanges);
         statsManager.UpdateStatCalculation("defence", defenceAdditiveChanges, defenceMultiplicativeChanges);
         statsManager.UpdateStatCalculation("armor", armorAdditiveChanges, armorMultiplicativeChanges);
     }

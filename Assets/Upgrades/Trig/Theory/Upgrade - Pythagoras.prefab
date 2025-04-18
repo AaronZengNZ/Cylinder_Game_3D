@@ -451,7 +451,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You move faster in diagonals, but you can't move in other directions.
+  m_text: More max velocity, but rotations are limited to 90 degrees.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
@@ -634,58 +634,65 @@ MonoBehaviour:
   animator: {fileID: 0}
   selfPrefab: {fileID: 5282318695436617744}
   TitleText: {fileID: 6586851731712690039}
-  title: Speed of [Cosines]
-  titleType: <color=#FF5555>Special</color>
+  title: Pythagoras' Swiftness
+  titleType: <color=#FFF555>Theory</color>
   DescText: {fileID: 492786798924985178}
   descriptions:
-  - You move faster in diagonals, but you can't move in other directions.
-  - The player's speed is futher enhanced. Mass is increased.
-  - The player's speed is futher enhanced. Mass is increased.
-  - The player's speed is futher enhanced. Mass is increased.
-  - The player can now also move in vertical and horizontal directions.
+  - More max velocity, but rotations are limited to 90 degrees.
+  - Max velocity and max hitpoints increased.
+  - Max velocity and max hitpoints further increased.
+  - Max velocity and max hitpoints even further increased.
+  - Max hitpoints increased. Rotations limited to 45 degrees.
   FunctionText: {fileID: 8626703380966514939}
   functions:
   - MovementAngle.RoundToInterval(90)
-  - MovementAngle.RoundToInterval(90)
-  - MovementAngle.RoundToInterval(90)
-  - MovementAngle.RoundToInterval(90)
-  - MovementAngle.RoundToInterval(45)
+  - player.maxHp += 15
+  - player.maxHp += 30
+  - player.maxHp += 50
+  - player.maxHp += 75
+  functionTransitions: 1
   SecondaryFunctionText: {fileID: 6475091965584668009}
   secondaryFunctions:
-  - player.s += 5
-  - plaser.s += 2, player.m += 10
-  - plaser.s += 2, player.m += 20
-  - plaser.s += 3, player.m += 30
-  - plaser.s += 3, player.m += 30
+  - player.vMax x1.5
+  - player.vMax x1.6
+  - player.vMax x1.7
+  - player.vMax x1.8
+  - MovementAngle.RoundToInterval(45)
+  secondaryTransitions: 1
   CostText: {fileID: 2599488139307278286}
   costs:
-  - 3
-  - 5
+  - 0
   - 10
-  - 30
-  - 50
+  - 25
+  - 80
+  - 200
   upgradeType: theory
   upgradeName: pythagoras_swiftness
   upgradeId: pyth_swiftness
-  upgradeValue1Type: movement_angle
+  upgradeValue1Type: player_hitpoints
   upgradeValue1Equation: add
   upgradeValue1:
-  - 90
-  - 90
-  - 90
-  - 90
-  - 45
-  upgradeValue2Type: player_mass
-  upgradeValue2Equation: add
-  upgradeValue2:
   - 0
-  - 10
+  - 15
   - 30
-  - 60
-  - 90
+  - 50
+  - 75
+  upgradeValue2Type: player_speed
+  upgradeValue2Equation: multiply
+  upgradeValue2:
+  - 1.5
+  - 1.6
+  - 1.7
+  - 1.8
+  - 1.8
   level: 0
-  currentCost: 1
+  maxLevel: 5
+  currentCost: 0
   upgrading: 0
+  specialUpgradeType: pythagoras
+  specialUpgradeOnLevel1: 1
+  specialUpgradeOnMaxLevel: 1
+  upgradeCostMultiplier: 1
 --- !u!114 &6842961966612527598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -908,7 +915,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Player.s+=5;
+  m_text: Player.vMax x1.2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
@@ -1042,7 +1049,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Cost: 1 UP'
+  m_text: 'Cost: 0 UP'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}

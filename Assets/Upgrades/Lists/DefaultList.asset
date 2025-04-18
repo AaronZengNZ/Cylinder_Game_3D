@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: DefaultList
   m_EditorClassIdentifier: 
   className: default
-  specialUpgrades: []
+  specialUpgrades:
+  - {fileID: 5282318695436617744, guid: 4ac3695b5f03a4a78b56a83c08d3261e, type: 3}
   specialUpgradeLevel: 0
   upgrades:
   - {fileID: 8915657044057172598, guid: 26ccacf42913946f19a802bddab22bc2, type: 3}

@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cubeComponentManager: {fileID: 0}
-  maxHp: 5
+  maxHp: 10
   deathParticles: {fileID: 1481150905211913128, guid: cb4d96827eb2a4cba9682a768057b217, type: 3}
   hasTarget: 0
   index: 0

@@ -347,14 +347,14 @@ MonoBehaviour:
   - Your defence is boosted even more at certain (longer) intervals.
   - Your defence is boosted even more at certain (longer) intervals.
   - Your defence is boosted even more at certain (longer) intervals.
-  - More defense, longer. You now also reflect damage when in stasis.
+  - More defence. While in stasis, you deal contact damage too.
   FunctionText: {fileID: 5643628672790384016}
   functions:
   - Case[Tan[t]>1] {d=d+5}
   - Case[Tan[t]>0.5] {d=d+10}
   - Case[Tan[t]>0] {d=d+20}
   - Case[Tan[t]>-0.5] {d=d+100}
-  - Case[Tan[t]>-1] {d=d+250}
+  - Case[Tan[t]>-0.5] {d=d+250}
   functionTransitions: 1
   SecondaryFunctionText: {fileID: 952803958743969816}
   secondaryFunctions:
@@ -362,7 +362,7 @@ MonoBehaviour:
   - Your defence is boosted around 36% of the time.
   - Your defence is boosted around 50% of the time.
   - Your defence is boosted around 64% of the time.
-  - Your defence is boosted around 75% of the time.
+  - On stasis, you deal damage equal to [vBase].
   secondaryTransitions: 0
   CostText: {fileID: 4709073186785599339}
   costs:
@@ -389,7 +389,7 @@ MonoBehaviour:
   - 0.5
   - 0
   - -0.5
-  - -1
+  - -0.5
   level: 0
   maxLevel: 5
   currentCost: 1
@@ -600,7 +600,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Obtain large amounts of defence at times, based on Tangent of time.
+  m_text: More defence. While in stasis, you deal contact damage too.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}

@@ -95,6 +95,14 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public void ShowUpgradeMenu(){
+        if(!menuTransition){
+            upgradeMenuShowing = true;
+            menuTransition = true;
+            StartCoroutine(MenuTransition());
+        }
+    }
+
     IEnumerator MenuTransition(){
         Time.timeScale = 0.75f;
         yield return new WaitForSecondsRealtime(0.25f);

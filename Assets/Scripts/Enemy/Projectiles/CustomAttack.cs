@@ -7,7 +7,7 @@ public class CustomAttack : MonoBehaviour
 {
     public string AttackType = "Lazer";
     public ParticleSystem attack;
-    public Slider attackIndicator;
+    public Image attackIndicator;
     public Collider attackCollider;
     public float indicationDuration = 1f;
     public float postAttackDuration = 0.2f;
@@ -16,10 +16,17 @@ public class CustomAttack : MonoBehaviour
     public Transform player;
     public GameObject parent;
     private bool hit = false;
+
+    public bool instantiateAtPlayer = false;
+    public float randomOffset = 2f;
     // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(transform.position.x, yPos, transform.position.z);
+        if (instantiateAtPlayer)
+        {
+            transform.position = new Vector3(player.position.x + Random.Range(-randomOffset, randomOffset), yPos, player.position.z + Random.Range(-randomOffset, randomOffset));
+        }
         player = FindObjectOfType<Player>().gameObject.GetComponent<Transform>();
         attackCollider.enabled = false;
         if(AttackType == "Lazer"){
@@ -35,13 +42,12 @@ public class CustomAttack : MonoBehaviour
 
     IEnumerator Lazer(){
         AimAtPlayer();
-        attackIndicator.gameObject.SetActive(true);
         //slide the slider from 0 to 1
         float time = 0;
         while(time < indicationDuration){
             time += Time.deltaTime;
-            if(time > indicationDuration / 2){attackIndicator.value = 1;}
-            else{attackIndicator.value = time / (indicationDuration / 2);}
+            if (time > indicationDuration / 2) { attackIndicator.fillAmount = 1; }
+            else { attackIndicator.fillAmount = time / (indicationDuration / 2); }
             if(parent == null){Destroy(gameObject);}
             yield return null;
         }
@@ -50,8 +56,12 @@ public class CustomAttack : MonoBehaviour
         time = 0;
         while(time < postAttackDuration){
             time += Time.deltaTime;
-            attackIndicator.value = 1 - time / postAttackDuration;
+            attackIndicator.fillAmount = 1 - time / postAttackDuration;
             yield return null;
+        }
+        if (postAttackDuration < 0)
+        {
+            yield return new WaitForSeconds(-postAttackDuration);
         }
         //delete gameobject
         Destroy(gameObject);

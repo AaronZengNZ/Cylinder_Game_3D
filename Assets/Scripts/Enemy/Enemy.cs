@@ -36,6 +36,7 @@ public class Enemy : MonoBehaviour
     public GameObject xpParticle;
     public float healDrop = 10f;
     public GameObject healingParticle;
+    public GameObject lootParticle;
     // OTHER
     public bool dead = false;
 
@@ -47,6 +48,8 @@ public class Enemy : MonoBehaviour
     private bool canAttack = true;
 
     public bool collision = false;
+
+    public ParticleSystem[] animatorEffects;
     // Start is called before the first frame update
     void Start()
     {
@@ -61,7 +64,8 @@ public class Enemy : MonoBehaviour
         StartCoroutine(Activate());
     }
 
-    public void RangedAttack(){
+    public void RangedAttack()
+    {
         GameObject newRangedWeapon = Instantiate(rangedWeapon, transform.position, Quaternion.identity);
         CustomAttack attackScript = newRangedWeapon.GetComponent<CustomAttack>();
         attackScript.player = player.transform;
@@ -69,15 +73,18 @@ public class Enemy : MonoBehaviour
         attackScript.parent = this.gameObject;
     }
 
-    IEnumerator Activate(){
+    IEnumerator Activate()
+    {
         //grey all blocks
-        for(int i = 0; i < blocks.Length; i++){
+        for (int i = 0; i < blocks.Length; i++)
+        {
             blocks[i].GetComponent<Renderer>().material = grayMaterial;
         }
         activated = false;
         enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index, customVar, customVar2);
         yield return new WaitForSeconds(activationTime);
-        for(int i = 0; i < blocks.Length; i++){
+        for (int i = 0; i < blocks.Length; i++)
+        {
             blocks[i].GetComponent<Renderer>().material = aliveMaterial;
         }
         SetActivationOfColliders(true);
@@ -85,13 +92,15 @@ public class Enemy : MonoBehaviour
         enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index, customVar, customVar2);
     }
 
-    private void StopMoving(){
+    private void StopMoving()
+    {
         enemyUpdateManager.SetVariables(rb, dead, activated, 0f, movementType, index, customVar, customVar2);
         rb.velocity = Vector3.zero;
         canMove = false;
     }
 
-    private void StartMoving(){
+    private void StartMoving()
+    {
         enemyUpdateManager.SetVariables(rb, dead, activated, moveSpeed, movementType, index, customVar, customVar2);
         canMove = true;
     }
@@ -101,19 +110,23 @@ public class Enemy : MonoBehaviour
         TakeDamage(damage);
     }
 
-    public void TakeDamage(float damage){
-        if(dead || !activated){return;}
-        float damageOverflow = damage-currentBlockHitpoints;
+    public void TakeDamage(float damage)
+    {
+        if (dead || !activated) { return; }
+        float damageOverflow = damage - currentBlockHitpoints;
         currentBlockHitpoints -= damage;
-        if(currentBlockHitpoints <= 0){
+        if (currentBlockHitpoints <= 0)
+        {
             blocksRemaining--;
-            if(blocksRemaining <= 0){
+            if (blocksRemaining <= 0)
+            {
                 dead = true;
                 enemyUpdateManager.SetVariables(rb, dead, activated, 0f, movementType, index, customVar, customVar2);
                 anim.SetTrigger("Dead");
                 SetActivationOfColliders(false);
             }
-            else{
+            else
+            {
                 currentBlockHitpoints = hitpointsPerBlock;
                 TakeDamage(damageOverflow);
             }
@@ -121,29 +134,37 @@ public class Enemy : MonoBehaviour
         ScaleBlockSizes();
     }
 
-    private void ScaleBlockSizes(){
-        if(currentBlockHitpoints > 0){
-        //    blocks[blocks.Length - 1].localScale = new Vector3(blockDefaultSize, blockDefaultSize, blockDefaultSize);
+    private void ScaleBlockSizes()
+    {
+        if (currentBlockHitpoints > 0)
+        {
+            //    blocks[blocks.Length - 1].localScale = new Vector3(blockDefaultSize, blockDefaultSize, blockDefaultSize);
         }
-        for(int i = 0; i < blocks.Length; i++){
-            if(i > blocksRemaining - 1){
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            if (i > blocksRemaining - 1)
+            {
                 blocks[i].GetComponent<Renderer>().material = grayMaterial;
             }
-            else if(i < blocksRemaining - 1){
+            else if (i < blocksRemaining - 1)
+            {
                 blocks[i].GetComponent<Renderer>().material = aliveMaterial;
             }
         }
     }
 
-    public void DieAndDestroy(){
+    public void DieAndDestroy()
+    {
         DropParticles();
         enemyUpdateManager.EnemyDestroyed(index);
         Instantiate(deathParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
-    private void SetActivationOfColliders(bool value){
-        foreach(Collider col in GetComponents<Collider>()){
+    private void SetActivationOfColliders(bool value)
+    {
+        foreach (Collider col in GetComponents<Collider>())
+        {
             col.enabled = value;
         }
     }
@@ -164,16 +185,28 @@ public class Enemy : MonoBehaviour
             particleScript.player = player;
             particleScript.healValue = healDrop / (1 + Mathf.Floor((healDrop / 5)));
         }
+
+        if(lootParticle != null)
+        {
+            GameObject newParticle = Instantiate(lootParticle, transform.position, Quaternion.identity);
+            ExperienceParticle particleScript = newParticle.GetComponent<ExperienceParticle>();
+            particleScript.player = player;
+        }
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if(other.tag == "Player"){
-            if(!collision){
-                if(attackType == "melee"){
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            if (!collision)
+            {
+                if (attackType == "melee")
+                {
                     other.GetComponent<PlayerHealth>().TakeDamage(attackDamage);
                 }
-                if(other.GetComponent<Player>().moving){
-                    TakeDamage(other.GetComponent<PlayerHealth>().defence * 10f);
+                if (other.GetComponent<Player>().moving)
+                {
+                    TakeDamage(other.GetComponent<PlayerHealth>().defence * other.GetComponent<Player>().velocity);
                 }
                 collision = true;
                 StartCoroutine(CollisionCooldown());
@@ -181,7 +214,8 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    IEnumerator CollisionCooldown(){
+    IEnumerator CollisionCooldown()
+    {
         //apply force to self, away from player, on the x and z axis
         Vector3 direction = (transform.position - player.transform.position).normalized;
         rb.velocity = new Vector3(direction.x * 40f, rb.velocity.y, direction.z * 40f);
@@ -190,5 +224,10 @@ public class Enemy : MonoBehaviour
         SetActivationOfColliders(true);
         yield return new WaitForSeconds(0.3f);
         collision = false;
+    }
+
+    public void PlayAnimatorParticles(int index = 0)
+    {
+        animatorEffects[index].Play();
     }
 }

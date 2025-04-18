@@ -21,7 +21,7 @@ public class CubeSpawner : MonoBehaviour
     public GameObject cube;
     float timeElapsed = 0f;
 
-    public float cubeHp = 10f;
+    public float cubeHpMulti = 1f;
 
     public Color stage1CubeColor = Color.red;
     public float stage1Gate = 10f;
@@ -155,12 +155,12 @@ public class CubeSpawner : MonoBehaviour
         }
         Vector3 spawnLocation = new Vector3(xAxis, yAxis, zAxis);
         GameObject newCube = Instantiate(cube, spawnLocation, Quaternion.identity);
-        
+
         newCube.transform.parent = transform;
 
         //set cube hp 
         CubeComponent cubeComponent = newCube.GetComponent<CubeComponent>();
-        cubeComponent.maxHp = cubeHp;
+        cubeComponent.maxHp *= cubeHpMulti;
         cubeComponent.xpDrop *= xpMultiplier;
 
         //set cube component manager
@@ -224,7 +224,7 @@ public class CubeSpawner : MonoBehaviour
         {
             hpAndXpScaling = 1f;
         }
-        cubeHp = 10f * Mathf.Pow(hpAndXpScaling, 2f);
+        cubeHpMulti = Mathf.Pow(hpAndXpScaling, 2f);
         xpMultiplier = Mathf.Pow(hpAndXpScaling, 3f);
         spawnRateWhenEmptySlots = baseSpawnRateWhenEmptySlots * Mathf.Pow(difficulty, 0.75f);
         spawnRate = baseSpawnRate * Mathf.Pow(difficulty, 0.75f);
@@ -267,7 +267,7 @@ public class CubeSpawner : MonoBehaviour
         difficultyText.text = $"diff={difficulty.ToString("F2")}";
         difficultyRampingText.text = $"[+{Math.Round(difficultyPerSecond, 2)}/s]";
         spawnRateText.text = $"spawn rate x{Math.Round(spawnRate / baseSpawnRate, 2)}";
-        hitpointsText.text = $"segment hp x{Math.Round(cubeHp / 10f, 2)}";
+        hitpointsText.text = $"segment hp x{Math.Round(cubeHpMulti, 2)}";
         damageText.text = $"damage x{Math.Round(damageMultiplier, 2)}";
         xpMultiText.text = $"xp multi x{Math.Round(xpMultiplier, 2)}";
     }

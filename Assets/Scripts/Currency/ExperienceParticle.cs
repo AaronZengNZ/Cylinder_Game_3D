@@ -36,6 +36,9 @@ public class ExperienceParticle : MonoBehaviour
     private float randomScale;
 
     public float healValue = 0f;
+    public bool minibossUpgrade = false;
+
+    public float randomSizeModifier = 0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +48,8 @@ public class ExperienceParticle : MonoBehaviour
         idle = true;
         speed = flingSpeed * Random.Range(0.5f, 1.5f);
         transform.position = new Vector3(transform.position.x, yPos, transform.position.z);
+        //scale
+
         RandomDirection();
         RandomTransform();
         UpFling();
@@ -62,6 +67,9 @@ public class ExperienceParticle : MonoBehaviour
         randomScale = Random.Range(minSize, maxSize);
        //increase randomScale by the square root of experience value / 10
         randomScale += (Mathf.Sqrt((Mathf.Pow(experienceValue, 0.4f) / 10 - 0.1f) / 2.5f + 1) - 1) * Random.Range(0.7f, 1.1f);
+        //set random scale
+        randomScale += Random.Range(randomSizeModifier * 0.8f, randomSizeModifier * 1.2f);
+        //add this randomsacle to transform scale
         transform.localScale = new Vector3(randomScale, randomScale, randomScale);
         //set random rotation
         transform.rotation = Quaternion.Euler(Random.Range(0f, 360f), Random.Range(0f, 360f), Random.Range(0f, 360f));
@@ -152,6 +160,15 @@ public class ExperienceParticle : MonoBehaviour
                 {
                     player.GetComponent<PlayerHealth>().Heal(healValue);
                 }
+
+                if (minibossUpgrade)
+                {
+                    UpgradeButtonManager upgradeButtonManager = GameObject.Find("UpgradeButtonManager").GetComponent<UpgradeButtonManager>();
+                    upgradeButtonManager.GetMinibossUpgrade();
+                    LevelManager levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+                    levelManager.ShowUpgradeMenu();
+                }
+
                 collected = true;
                 StartCoroutine(CollectAndDestroy());
             }

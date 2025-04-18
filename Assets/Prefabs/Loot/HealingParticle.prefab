@@ -239,10 +239,10 @@ MonoBehaviour:
   flingSpeed: 3
   verticalFlingSpeed: 8
   gravity: 20
-  speed: 10
+  speed: 15
   deceleration: 5
   baseSpeed: 0
-  acceleration: 20
+  acceleration: 30
   pickupRadius: 0
   directionAngle: 1
   yPos: 0.8
@@ -252,6 +252,8 @@ MonoBehaviour:
   experienceValue: 0
   pickupCooldown: 0.8
   healValue: 5
+  minibossUpgrade: 0
+  randomSizeModifier: 0.05
 --- !u!54 &2655166172598917303
 Rigidbody:
   m_ObjectHideFlags: 0

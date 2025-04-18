@@ -55,7 +55,7 @@ public class CubeComponent : MonoBehaviour
         {
             if (other.gameObject.GetComponent<Player>().moving)
             {
-                TakeDamage(other.GetComponent<PlayerHealth>().defence * 10f);
+                TakeDamage(other.GetComponent<PlayerHealth>().defence * other.GetComponent<Player>().velocity);
             }
         }
     }

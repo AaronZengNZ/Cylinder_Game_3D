@@ -37,9 +37,11 @@ public class PlayerHealth : MonoBehaviour
         armorText.text = $"a={Mathf.Ceil(armor)}%";
     }
 
-    public void GetVariables(){
+    public void GetVariables()
+    {
         defence = statsManager.GetStatFloat("defence");
         armor = statsManager.GetStatFloat("armor");
+        maxHitpoints = statsManager.GetStatFloat("playerHp");
     }
 
     public void TakeDamage(float amount){
