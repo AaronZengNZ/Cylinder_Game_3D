@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class Player : MonoBehaviour
     public UiTextManager uiTextManager;
     public StatsManager statsManager;
     public UpgradeManager upgradeManager;
+    public TextMeshProUGUI velocityText;
     [Header("Movement")]
     public float speed = 5.0f;
     public bool moving = false;
@@ -27,7 +30,7 @@ public class Player : MonoBehaviour
     private float accelerationValue = 0f;
     public float acceleration = 0.2f;
     public float velocity = 0f;
-    public float maxVelMulti = 1f;
+    public float maxVel = 1.5f;
     public float mass = 10f;
     public GameObject auras;
 
@@ -46,36 +49,50 @@ public class Player : MonoBehaviour
         upgradeManager = GameObject.Find("UpgradeManager").GetComponent<UpgradeManager>();
     }
 
-    void Update(){
-        CheckForToggleMovement(); 
+    void Update()
+    {
+        CheckForToggleMovement();
         GetVariables();
         GetUpgrades();
         Movement();
         Rotate();  
+        UpdateUI();
     }
-    private void GetVariables(){
+
+    private void UpdateUI()
+    {
+        velocityText.text = $"v={velocity.ToString("F2")}u/s";
+    }
+
+    private void GetVariables()
+    {
         //get mouse pos in world with ground layermask raycast
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         bool hitVoid = false;
-        if(Physics.Raycast(ray, out hit, 1000, LayerMask.GetMask("Ground"))){
+        if (Physics.Raycast(ray, out hit, 1000, LayerMask.GetMask("Ground")))
+        {
             mousePosInWorld = hit.point;
-            if(hit.collider.tag == "Void"){
+            if (hit.collider.tag == "Void")
+            {
                 hitVoid = true;
             }
         }
         cursorLocation.position = mousePosInWorld;
         hitWall = false;
         //case another ray from the player's position to the mouse position
-        if(hitVoid){
+        if (hitVoid)
+        {
             Vector3 tempMousePosInWorld = mousePosInWorld;
             tempMousePosInWorld.y = transform.position.y;
             mousePosInWorld = tempMousePosInWorld;
             cursorLocation.position = mousePosInWorld;
             //cast a raycast from playerPosition to mousePosInWorld
-            if(Physics.Raycast(transform.position, mousePosInWorld - transform.position, out hit, 1000, LayerMask.GetMask("Wall"))){
+            if (Physics.Raycast(transform.position, mousePosInWorld - transform.position, out hit, 1000, LayerMask.GetMask("Wall")))
+            {
                 mousePosInWorld = hit.point;
-                if(GetVector2Distance(transform.position, mousePosInWorld) < 0.5f){
+                if (GetVector2Distance(transform.position, mousePosInWorld) < 0.5f)
+                {
                     hitWall = true;
                     return;
                 }
@@ -86,7 +103,7 @@ public class Player : MonoBehaviour
 
     private void GetUpgrades()
     {
-        maxVelMulti = statsManager.GetStatFloat("playerSpeed");
+        maxVel = statsManager.GetStatFloat("playerSpeed");
         pythagorasLimitationAngles = upgradeManager.pythagorasLimitationAngles;
     }
 
@@ -120,8 +137,8 @@ public class Player : MonoBehaviour
                 }
 
                 Vector3 moveDirection = new Vector3(Mathf.Sin(prevYrotation * Mathf.Deg2Rad), 0, Mathf.Cos(prevYrotation * Mathf.Deg2Rad));
-                rb.velocity = -moveDirection * speed * (1 + accelerationValue * 0.5f);
-                velocity = speed * (1 + accelerationValue) / 2.4f;
+                rb.velocity = -moveDirection * speed * (accelerationValue);
+                velocity = speed * (1 + (accelerationValue - 1) * 2f) / 2.4f;
             }
             else
             {
@@ -136,7 +153,7 @@ public class Player : MonoBehaviour
     private void Rotate(){
         //do not rotate if timescale is 0
         if(Time.timeScale <= 0.1f){return;}
-        if(movingActive == false){accelerationValue = 0;}
+        if(movingActive == false){accelerationValue = 1;}
         //point transform at lookpos
         transform.LookAt(new Vector3(mousePosInWorld.x, transform.position.y, mousePosInWorld.z));
         prevYrotation = transform.eulerAngles.y - 180;
@@ -170,8 +187,8 @@ public class Player : MonoBehaviour
 
     private void CheckForToggleMovement(){
         accelerationValue += acceleration * Time.deltaTime;
-        if(accelerationValue > 1 * maxVelMulti){
-            accelerationValue = 1 * maxVelMulti;
+        if(accelerationValue > 1 * maxVel){
+            accelerationValue = 1 * maxVel;
         }
         if(Input.GetMouseButtonDown(1)){
             moving = !moving;

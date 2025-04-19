@@ -190,7 +190,7 @@ MonoBehaviour:
   selfPrefab: {fileID: 1860265299415577807}
   TitleText: {fileID: 2144363084098304864}
   title: Additive Power
-  titleType: <color=#DDDDDD>Basic
+  titleType: <color=#DDDDDD>Basic</color>
   DescText: {fileID: 8483495853120124779}
   descriptions:
   - Your power is increased by a sliver, additively.
@@ -247,8 +247,13 @@ MonoBehaviour:
   - 1.35
   - 1.6
   level: 0
+  maxLevel: 5
   currentCost: 1
   upgrading: 0
+  specialUpgradeType: none
+  specialUpgradeOnLevel1: 0
+  specialUpgradeOnMaxLevel: 0
+  upgradeCostMultiplier: 1
 --- !u!114 &8965815819073292023
 MonoBehaviour:
   m_ObjectHideFlags: 0

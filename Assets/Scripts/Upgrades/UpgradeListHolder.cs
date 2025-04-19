@@ -206,6 +206,11 @@ public class UpgradeListHolder : MonoBehaviour
         else
         {
             int index = System.Array.IndexOf(upgrades, upgrade);
+            if(index > upgradeLevels.Length - 1 || index < 0)
+            {
+                UnityEngine.Debug.Log("Index out of bounds");
+                return 0;
+            }
             return (int)upgradeLevels[index];
         }
     }

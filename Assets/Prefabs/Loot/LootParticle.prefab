@@ -253,7 +253,7 @@ MonoBehaviour:
   pickupCooldown: 0.8
   healValue: 0
   minibossUpgrade: 1
-  randomSizeModifier: 0.4
+  randomSizeModifier: 0.25
 --- !u!54 &2655166172598917303
 Rigidbody:
   m_ObjectHideFlags: 0

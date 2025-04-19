@@ -678,13 +678,13 @@ MonoBehaviour:
   - 50
   - 75
   upgradeValue2Type: player_speed
-  upgradeValue2Equation: multiply
+  upgradeValue2Equation: add
   upgradeValue2:
-  - 1.5
-  - 1.6
-  - 1.7
-  - 1.8
-  - 1.8
+  - 0.5
+  - 0.6
+  - 0.7
+  - 0.8
+  - 0.8
   level: 0
   maxLevel: 5
   currentCost: 0

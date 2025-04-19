@@ -2,11 +2,14 @@ using System.Linq.Expressions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class UpgradeButtonManager : MonoBehaviour
 {
     public UpgradeButton[] upgradeButtons;
     private UpgradeButton[] savedUpgradeButtons;
+    private string savedUpgradeType = "normal";
     public LevelManager levelManager;
     public UpgradeListHolder upgradeListHolder;
     public NotificationHandler notificationHandler;
@@ -14,6 +17,15 @@ public class UpgradeButtonManager : MonoBehaviour
     public float upgradesToInstantiate = 3f;
     public bool upgrading = false;
     public bool doingUnique = false;
+    private string currentUpgradeType = "normal";
+    public TextMeshProUGUI upgradeTitle;
+    public string normalUpgradeTitle = "Enhance the formula?";
+    public string uniqueUpgradeTitle = "Discover a theory?";
+    public string specialUpgradeTitle = "Select a fundamental.";
+    public GameObject rerollButton;
+    public TextMeshProUGUI rerollCostText;
+    public float rerollCost = 1f;
+    private bool rerollingEnabled = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -78,7 +90,55 @@ public class UpgradeButtonManager : MonoBehaviour
 
     IEnumerator InstantiateNewUpgrades(string type, bool fromUnique = false)
     {
-        yield return new WaitForSecondsRealtime(0.5f);
+        currentUpgradeType = type;
+        if (fromUnique)
+        {
+            currentUpgradeType = savedUpgradeType;
+        }
+        //over the span of 0.25 seconds remove characters
+        string currentUpgradeTitleText = upgradeTitle.text;
+        string nextUpgradeTitleText = "";
+
+        if (currentUpgradeType == "special")
+        {
+            nextUpgradeTitleText = specialUpgradeTitle;
+            rerollingEnabled = false;
+            rerollCostText.text = "Cannot Reroll.";
+        }
+        else if (currentUpgradeType == "unique")
+        {
+            nextUpgradeTitleText = uniqueUpgradeTitle;
+            rerollingEnabled = true;
+            rerollCostText.text = "Reroll - <color=#00FFFF> 1 free";
+        }
+        else
+        {
+            nextUpgradeTitleText = normalUpgradeTitle;
+            rerollingEnabled = true;
+            rerollCostText.text = "Reroll - <color=#00FFFF>" + Mathf.RoundToInt(rerollCost) + " UP";
+        }
+
+        if (currentUpgradeTitleText == nextUpgradeTitleText)
+        {
+            yield return new WaitForSecondsRealtime(0.5f);
+        }
+        else
+        {
+            if (currentUpgradeTitleText.Length > 0)
+            {
+                for (int i = 0; i < currentUpgradeTitleText.Length; i++)
+                {
+                    upgradeTitle.text = currentUpgradeTitleText.Substring(0, currentUpgradeTitleText.Length - i);
+                    yield return new WaitForSecondsRealtime(0.5f / currentUpgradeTitleText.Length);
+                }
+            }
+            for (int i = 0; i < nextUpgradeTitleText.Length; i++)
+            {
+                upgradeTitle.text = nextUpgradeTitleText.Substring(0, i + 1);
+                yield return new WaitForSecondsRealtime(0.5f / nextUpgradeTitleText.Length);
+            }
+        }
+
         if (fromUnique)
         {
             upgradeButtons = new UpgradeButton[savedUpgradeButtons.Length];
@@ -87,6 +147,7 @@ public class UpgradeButtonManager : MonoBehaviour
                 upgradeButtons[i] = savedUpgradeButtons[i];
                 upgradeButtons[i].gameObject.SetActive(true);
             }
+            currentUpgradeType = savedUpgradeType;
         }
         else
         {
@@ -139,8 +200,69 @@ public class UpgradeButtonManager : MonoBehaviour
             upgradeButtons[i].gameObject.SetActive(false);
         }
         upgradeButtons = new UpgradeButton[0];
+        savedUpgradeType = currentUpgradeType;
         //instantiate new upgrades
         doingUnique = true;
         StartCoroutine(InstantiateNewUpgrades("unique"));
+    }
+
+    public void TryReroll()
+    {
+        StartCoroutine(TryRerollCoroutine());
+    }
+
+    IEnumerator TryRerollCoroutine()
+    {
+        if(rerollingEnabled == false)
+        {
+            if(currentUpgradeType == "unique")
+            {
+                notificationHandler.NewNotification("You can only reroll theory upgrades once.");
+            }
+            else
+            {
+                notificationHandler.NewNotification("Cannot reroll special upgrades.");
+            }
+            yield break;
+        }
+
+        float tempRerollCost = rerollCost;
+        if (currentUpgradeType == "unique")
+        {
+            tempRerollCost = 0;
+        }
+        yield return null;
+        if (levelManager.CheckPrice(tempRerollCost))
+        {
+            //clear upgrades first
+            for (int i = 0; i < upgradeButtons.Length; i++)
+            {
+                upgradeButtons[i].DisableButton();
+            }
+
+            yield return new WaitForSecondsRealtime(2f);
+
+            for (int i = 0; i < upgradeButtons.Length; i++)
+            {
+                Destroy(upgradeButtons[i].gameObject);
+            }
+
+            StartCoroutine(InstantiateNewUpgrades(currentUpgradeType));
+
+            if (currentUpgradeType == "unique")
+            {
+                rerollingEnabled = false;
+                rerollCostText.text = "Cannot Reroll.";
+                yield break;
+            }
+            levelManager.SpendCurrency(tempRerollCost);
+            //double reroll cost
+            rerollCost *= 2;
+            rerollCostText.text = "Reroll - <color=#00FFFF>" + Mathf.RoundToInt(rerollCost) + " UP";
+        }
+        else
+        {
+            notificationHandler.NewNotification("Not enough upgrade points!");
+        }
     }
 }
