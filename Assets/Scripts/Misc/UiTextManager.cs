@@ -44,9 +44,9 @@ public class UiTextManager : MonoBehaviour
         if((1f / c[0]) > 100f){
             cooldown = "∞";
         }
-        float bulletSpeed = s[0];
-        float bulletDamage = p[0];
-        float bulletMass = m[0];
+        float bulletSpeed = Mathf.Round(s[0]);
+        float bulletDamage = Mathf.Round(p[0]);
+        float bulletMass = Mathf.Round(m[0]);
         tempGunText += "Case[∆t("+timeSinceLastFire+")>c("+cooldown+")]{Projectile(s="+bulletSpeed+", p="+bulletDamage+", m="+bulletMass+")}";
         gunText.text = tempGunText;
     }

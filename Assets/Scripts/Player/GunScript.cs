@@ -11,6 +11,7 @@ public class GunScript : MonoBehaviour
     public Player player;
     public GameObject bulletPrefab;
     public UiTextManager uiTextManager;
+    public UpgradeManager upgradeManager;
     [Header("Private Stats")]
     public float gunScreenShake = 1f;
     public float gunScreenShakeTime = 0.05f;
@@ -31,6 +32,8 @@ public class GunScript : MonoBehaviour
     void Start()
     {
         uiTextManager = GameObject.Find("UITextManager").GetComponent<UiTextManager>();
+        upgradeManager = GameObject.Find("UpgradeManager").GetComponent<UpgradeManager>();
+        player = GameObject.Find("Player").GetComponent<Player>();
     }
 
     // Update is called once per frame
@@ -77,23 +80,38 @@ public class GunScript : MonoBehaviour
     private void GunCalculations(){
         if(canShoot){
             timeSinceLastFire += Time.deltaTime;
-            if(Input.GetMouseButton(0) && timeSinceLastFire >= 1f/firerate){
+            if (Input.GetMouseButton(0) && timeSinceLastFire >= 1f / firerate)
+            {
                 Shoot();
+                upgradeManager.FireCalculations();
+            }
+            else if(timeSinceLastFire >= (1f / firerate + Time.deltaTime)){
+                upgradeManager.NotFiringCalculations();
             }
         }
     }
 
     private void Shoot(){
         if(movingActive == true){return;}
-        timeSinceLastFire = 0f;
-        //CinemachineShake.Instance.ShakeCamera(gunScreenShake, gunScreenShakeTime);
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-        BulletScript bulletScript = bullet.GetComponent<BulletScript>();
-        float randomOffset = Random.Range(-(Mathf.Pow(firerate, 0.6f) / 5f), (Mathf.Pow(firerate, 0.6f) / 5f));
+        timeSinceLastFire = 1f / firerate + Time.deltaTime;
+        float tempDamageMulti = 1f;
+        if (timeSinceLastFire / (1f / firerate) > 5f)
+        {
+            tempDamageMulti = timeSinceLastFire / (5f / firerate);
+            timeSinceLastFire = 5f / firerate;
+        }
+        while (timeSinceLastFire >= 1f / firerate)
+        {
+            timeSinceLastFire -= 1f / firerate;
+            //CinemachineShake.Instance.ShakeCamera(gunScreenShake, gunScreenShakeTime);
+            GameObject bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
+            BulletScript bulletScript = bullet.GetComponent<BulletScript>();
+            float randomOffset = Random.Range(-(Mathf.Pow(firerate, 0.6f) / 5f), (Mathf.Pow(firerate, 0.6f) / 5f));
 
-        bulletScript.yDirection = prevYrotation + gunOffsetAngle + randomOffset;
-        bulletScript.damage = bulletDamage;
-        bulletScript.speed = bulletSpeed;
-        bulletScript.pierce = pierce;
+            bulletScript.yDirection = prevYrotation + gunOffsetAngle + randomOffset;
+            bulletScript.damage = bulletDamage * tempDamageMulti;
+            bulletScript.speed = bulletSpeed;
+            bulletScript.pierce = pierce;
+        }
     }
 }

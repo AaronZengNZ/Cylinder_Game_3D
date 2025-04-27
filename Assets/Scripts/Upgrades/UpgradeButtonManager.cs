@@ -26,6 +26,7 @@ public class UpgradeButtonManager : MonoBehaviour
     public TextMeshProUGUI rerollCostText;
     public float rerollCost = 1f;
     private bool rerollingEnabled = true;
+    private bool rerolling = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +35,7 @@ public class UpgradeButtonManager : MonoBehaviour
         FindButtons();
         //StartCoroutine(InstantiateNewUpgrades("special"));
         StartCoroutine(InstantiateNewUpgrades("special"));
+        rerolling = false;
     }
 
     // Update is called once per frame
@@ -161,6 +163,7 @@ public class UpgradeButtonManager : MonoBehaviour
                 newUpgradeButton.UpdateCost(levelManager.GetMultiplier());
             }
         }
+        rerolling = false;
     }
 
     private void CheckButtons()
@@ -213,9 +216,14 @@ public class UpgradeButtonManager : MonoBehaviour
 
     IEnumerator TryRerollCoroutine()
     {
-        if(rerollingEnabled == false)
+        if(rerolling == true || upgrading == true)
         {
-            if(currentUpgradeType == "unique")
+            notificationHandler.NewNotification("Cannot reroll again yet. Be patient.");
+            yield break;
+        }
+        if (rerollingEnabled == false)
+        {
+            if (currentUpgradeType == "unique")
             {
                 notificationHandler.NewNotification("You can only reroll theory upgrades once.");
             }
@@ -234,13 +242,14 @@ public class UpgradeButtonManager : MonoBehaviour
         yield return null;
         if (levelManager.CheckPrice(tempRerollCost))
         {
+            rerolling = true;
             //clear upgrades first
             for (int i = 0; i < upgradeButtons.Length; i++)
             {
                 upgradeButtons[i].DisableButton();
             }
 
-            yield return new WaitForSecondsRealtime(2f);
+            yield return new WaitForSecondsRealtime(1.6f);
 
             for (int i = 0; i < upgradeButtons.Length; i++)
             {

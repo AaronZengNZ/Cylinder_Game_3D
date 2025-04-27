@@ -95,8 +95,20 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void ShowUpgradeMenu(){
-        if(!menuTransition){
+    public void ToggleMenu()
+    {
+        if(!menuTransition)
+        {
+            upgradeMenuShowing = !upgradeMenuShowing;
+            menuTransition = true;
+            StartCoroutine(MenuTransition());
+        }
+    }
+
+    public void ShowUpgradeMenu()
+    {
+        if (!menuTransition)
+        {
             upgradeMenuShowing = true;
             menuTransition = true;
             StartCoroutine(MenuTransition());

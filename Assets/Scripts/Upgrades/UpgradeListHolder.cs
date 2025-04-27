@@ -133,16 +133,11 @@ public class UpgradeListHolder : MonoBehaviour
                 upgradeInSpecialUpgradeArray = specialUpgrade;
             }
         }
-        //remove the unique upgrade from it's array
-        GameObject[] tempUniqueUpgrades = new GameObject[uniqueUpgrades.Length - 1];
-        for (int i = 0; i < uniqueUpgrades.Length; i++)
-        {
-            if (uniqueUpgrades[i] != upgradeInSpecialUpgradeArray)
-            {
-                tempUniqueUpgrades[i] = uniqueUpgrades[i];
-            }
-        }
-        uniqueUpgrades = tempUniqueUpgrades;
+        //remove the unique upgrade from its array
+        List<GameObject> tempUniqueUpgrades = new List<GameObject>(uniqueUpgrades);
+        tempUniqueUpgrades.Remove(upgradeInSpecialUpgradeArray);
+        //if the upgrade is not in the list, add it to the list
+        uniqueUpgrades = tempUniqueUpgrades.ToArray();
 
         //if the upgrade is not in the list, add it to the list
         GameObject[] tempUpgrades = new GameObject[upgrades.Length + 1];
@@ -157,7 +152,7 @@ public class UpgradeListHolder : MonoBehaviour
         upgrades = tempUpgrades;
         upgradeLevels = tempUpgradeLevels;
 
-        upgradeInSpecialUpgradeArray.GetComponent<UpgradeButton>().upgradeCostMultiplier *= Mathf.Pow(5f, uniqueUpgradesGot);
+        upgradeInSpecialUpgradeArray.GetComponent<UpgradeButton>().upgradeCostMultiplier *= Mathf.Pow(10f, uniqueUpgradesGot);
     }
 
     private void AddNewUpgradesToList(UpgradeList list)

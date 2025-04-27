@@ -19,14 +19,14 @@ public class CubeComponent : MonoBehaviour
         hp = maxHp;
         GetComponent<MeshRenderer>().enabled = false;
     }
-    public void HitByBullet(float damage)
+    
+    public void TakeDamage(float damage, float percentageDamage = 0f, bool temp = false)
     {
-        TakeDamage(damage);
-    }
-
-    private void TakeDamage(float damage)
-    {
-        if(hasTarget == true){return;}
+        if (percentageDamage > 0f)
+        {
+            damage += maxHp * percentageDamage / 100f;
+        }
+        if (hasTarget == true) { return; }
         hp -= damage;
         if (hp <= 0)
         {
@@ -53,10 +53,7 @@ public class CubeComponent : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            if (other.gameObject.GetComponent<Player>().moving)
-            {
-                TakeDamage(other.GetComponent<PlayerHealth>().defence * other.GetComponent<Player>().velocity);
-            }
+            TakeDamage(other.gameObject.GetComponent<Player>().GetCollisionDamage());
         }
     }
 

@@ -31,13 +31,13 @@ public class UpgradeManager : MonoBehaviour
     public float gunOffsetQuantityBase = 10f;
     private float gunOffsetQuantityChanges = 0f;
     //special
-    [Header ("Trig")]
+    [Header("Trig")]
     public float cosineTimeMult = 1f;
     public float cosineSpeedMult = 1f;
     public float tangentRequirement = 3f;
     public float tangentBuff = 0f;
     public GameObject tangentAura;
-    [Header ("Misc Stats")]
+    [Header("Misc Stats")]
     public float defenceMultiplicativeChanges = 1f;
     public float defenceAdditiveChanges = 0f;
     public float armorMultiplicativeChanges = 1f;
@@ -52,36 +52,58 @@ public class UpgradeManager : MonoBehaviour
     public float theoryUpgradesGot = 0f;
     public bool tangentMaxed = false;
     public float pythagorasLimitationAngles = 0f;
+    public bool sinMaxed = false;
 
     public GameObject tangentDefenceText;
     public GameObject cosineAspdText;
+    public GameObject sinPowerText;
+    public GameObject summationText;
+
+    public float goldenRatioVelocityCorrespondence = 0f;
+    public float goldenRatioPower = 0f;
+    public bool goldenRatioMaxed = false;
+
+
+
+    public float summationFirerateRampMax = 0f;
+    public float summationFirerateReduction = 0f;
+    public float summationFirerateMulti = 0f;
+    public bool summationMaxed = false;
     // Start is called before the first frame update
     void Start()
     {
         ResetVariablesToZero();
         tangentMaxed = false;
+        sinMaxed = false;
+        goldenRatioMaxed = false;
+        summationMaxed = false;
         pythagorasLimitationAngles = 0f;
     }
 
-    public void NewUpgrade(string upgradeType, string upgradeName, string upgradeId, 
-    string upgradeValue1Type, string upgradeValue1Equation, float upgradeValue1, 
-    string upgradeValue2Type, string upgradeValue2Equation, float upgradeValue2){
-        if(CheckUpgradeExists(upgradeName)){
+    public void NewUpgrade(string upgradeType, string upgradeName, string upgradeId,
+    string upgradeValue1Type, string upgradeValue1Equation, float upgradeValue1,
+    string upgradeValue2Type, string upgradeValue2Equation, float upgradeValue2)
+    {
+        if (CheckUpgradeExists(upgradeName))
+        {
             //find the upgrade and replace the values
             GameObject oldUpgrade = null;
-            foreach(SpecialUpgradeSimulator upgrade in upgradeSimulators){
-                if(upgrade.upgradeName == upgradeName){
+            foreach (SpecialUpgradeSimulator upgrade in upgradeSimulators)
+            {
+                if (upgrade.upgradeName == upgradeName)
+                {
                     UnityEngine.Debug.Log(upgrade.upgradeName);
                     oldUpgrade = upgrade.gameObject;
                 }
             }
-            if(oldUpgrade == null){return;}
+            if (oldUpgrade == null) { return; }
             SpecialUpgradeSimulator UpgradeSimulator = oldUpgrade.GetComponent<SpecialUpgradeSimulator>();
             UpgradeSimulator.upgradeValue1 = upgradeValue1;
             UpgradeSimulator.upgradeValue2 = upgradeValue2;
             return;
         }
-        else{
+        else
+        {
             GameObject newUpgrade = Instantiate(specialUpgradePrefab, transform.position, Quaternion.identity);
             newUpgrade.transform.parent = transform;
             SpecialUpgradeSimulator newUpgradeSimulator = newUpgrade.GetComponent<SpecialUpgradeSimulator>();
@@ -118,6 +140,24 @@ public class UpgradeManager : MonoBehaviour
                     tangentMaxed = true;
                 }
                 break;
+            case "sine":
+                if (check == "max")
+                {
+                    sinMaxed = true;
+                }
+                break;
+            case "golden_ratio":
+                if (check == "max")
+                {
+                    goldenRatioMaxed = true;
+                }
+                break;
+            case "summation":
+                if (check == "max")
+                {
+                    summationMaxed = true;
+                }
+                break;
         }
     }
 
@@ -128,35 +168,42 @@ public class UpgradeManager : MonoBehaviour
         upgradeSimulators = upgradeList.ToArray();
     }
 
-    private bool CheckUpgradeExists(string upgradeName){
-        foreach(SpecialUpgradeSimulator upgrade in upgradeSimulators){
-            if(upgrade.upgradeName == upgradeName){
+    private bool CheckUpgradeExists(string upgradeName)
+    {
+        foreach (SpecialUpgradeSimulator upgrade in upgradeSimulators)
+        {
+            if (upgrade.upgradeName == upgradeName)
+            {
                 return true;
             }
         }
         return false;
     }
 
-    private void SimulateUpgradeStatByUpgrade(SpecialUpgradeSimulator target){
-        switch (target.upgradeValue1Equation){
+    private void SimulateUpgradeStatByUpgrade(SpecialUpgradeSimulator target)
+    {
+        switch (target.upgradeValue1Equation)
+        {
             case "add":
                 UpgradeValueHandlerAdditive(target.upgradeValue1Type, target.upgradeValue1);
-            break;
+                break;
             case "multiply":
                 UpgradeValueHandlerMultiplicative(target.upgradeValue1Type, target.upgradeValue1);
-            break;
+                break;
         }
-        switch (target.upgradeValue2Equation){
+        switch (target.upgradeValue2Equation)
+        {
             case "add":
                 UpgradeValueHandlerAdditive(target.upgradeValue2Type, target.upgradeValue2);
-            break;
+                break;
             case "multiply":
                 UpgradeValueHandlerMultiplicative(target.upgradeValue2Type, target.upgradeValue2);
-            break;  
-        }      
+                break;
+        }
     }
 
-    private void UpgradeValueHandlerAdditive(string upgradeType, float upgradeValue){
+    private void UpgradeValueHandlerAdditive(string upgradeType, float upgradeValue)
+    {
         switch (upgradeType)
         {
             case "gun_firerate":
@@ -204,11 +251,47 @@ public class UpgradeManager : MonoBehaviour
             case "movement_angle":
                 pythagorasLimitationAngles += upgradeValue;
                 break;
+            case "golden_ratio_velocity":
+                goldenRatioVelocityCorrespondence += upgradeValue;
+                break;
+            case "golden_ratio_power":
+                goldenRatioPower += upgradeValue;
+                break;
+            case "summation_max":
+                summationFirerateRampMax += upgradeValue;
+                break;
+            case "summation_level":
+                switch (upgradeValue)
+                {
+                    case 1:
+                        summationFirerateReduction = 0.1f;
+                        firerateMultiplicativeChanges *= 0.8f;
+                        break;
+                    case 2:
+                        summationFirerateReduction = 0.125f;
+                        firerateMultiplicativeChanges *= 0.7f;
+                        break;
+                    case 3:
+                        summationFirerateReduction = 0.15f;
+                        firerateMultiplicativeChanges *= 0.65f;
+                        break;
+                    case 4:
+                        summationFirerateReduction = 0.18f;
+                        firerateMultiplicativeChanges *= 0.6f;
+                        break;
+                    case 5:
+                        summationFirerateReduction = 0.05f;
+                        firerateMultiplicativeChanges *= 0.6f;
+                        break;
+                }
+                break;
         }
     }
 
-    private void UpgradeValueHandlerMultiplicative(string upgradeType, float upgradeValue){
-        switch (upgradeType){
+    private void UpgradeValueHandlerMultiplicative(string upgradeType, float upgradeValue)
+    {
+        switch (upgradeType)
+        {
             case "gun_firerate":
                 firerateMultiplicativeChanges *= upgradeValue;
                 break;
@@ -239,9 +322,11 @@ public class UpgradeManager : MonoBehaviour
         }
     }
 
-    private void SimulateUpgradeAllStats(){
+    private void SimulateUpgradeAllStats()
+    {
         ResetVariablesToZero();
-        foreach(SpecialUpgradeSimulator upgrade in upgradeSimulators){
+        foreach (SpecialUpgradeSimulator upgrade in upgradeSimulators)
+        {
             SimulateUpgradeStatByUpgrade(upgrade);
         }
     }
@@ -273,17 +358,25 @@ public class UpgradeManager : MonoBehaviour
         armorMultiplicativeChanges = 1f;
         tangentBuff = 0f;
         tangentRequirement = 0f;
+        goldenRatioVelocityCorrespondence = 0f;
+        goldenRatioPower = 0f;
+        summationFirerateRampMax = 0f;
+        summationFirerateReduction = 0f;
     }
 
     // Update is called once per frame
     void Update()
     {
+        UpdateSummationText();
         SimulateUpgradeAllStats();
         float newFirerateMultiplicativeChanges = firerateMultiplicativeChanges;
-        newFirerateMultiplicativeChanges = newFirerateMultiplicativeChanges * CosSpeed();
+        newFirerateMultiplicativeChanges *= CosSpeed();
+        newFirerateMultiplicativeChanges *= 1 + summationFirerateMulti;
+        float newDamageMultiplicativeChanges = damageMultiplicativeChanges;
+        newDamageMultiplicativeChanges *= SinPower();
         TangentUpgradeCheck();
         statsManager.UpdateStatCalculation("firerate", firerateAdditiveChanges, newFirerateMultiplicativeChanges);
-        statsManager.UpdateStatCalculation("damage", damageAdditiveChanges, damageMultiplicativeChanges);
+        statsManager.UpdateStatCalculation("damage", damageAdditiveChanges, newDamageMultiplicativeChanges);
         statsManager.UpdateStatCalculation("pierce", pierceAdditiveChanges, pierceMultiplicativeChanges);
         statsManager.UpdateStatCalculation("bulletSpeed", bulletSpeedAdditiveChanges, bulletSpeedMultiplicativeChanges);
         statsManager.UpdateStatCalculation("bulletMass", bulletMassAdditiveChanges, bulletMassMultiplicativeChanges);
@@ -295,40 +388,114 @@ public class UpgradeManager : MonoBehaviour
         statsManager.UpdateStatCalculation("armor", armorAdditiveChanges, armorMultiplicativeChanges);
     }
 
-    private void TangentUpgradeCheck(){
-        if(tangentBuff > 0){
+    private void TangentUpgradeCheck()
+    {
+        if (tangentBuff > 0)
+        {
             tangentDefenceText.SetActive(true);
-            tangentDefenceText.GetComponent<TextMeshProUGUI>().text = "<color=#FF5555>Case[Tan[t]>"+tangentRequirement+"]<color=\"white\">{d=d+"+tangentBuff+"}("+TanCheck()+")";
-            if(TanCheck()){
+            tangentDefenceText.GetComponent<TextMeshProUGUI>().text = "<color=#FF5555>Case[Tan[t]>" + tangentRequirement + "]<color=\"white\">{d=d+" + tangentBuff + "}(" + TanCheck() + ")";
+            if (TanCheck())
+            {
                 defenceAdditiveChanges += tangentBuff;
                 tangentAura.GetComponent<Animator>().SetBool("Show", true);
-            }else{
+            }
+            else
+            {
                 tangentAura.GetComponent<Animator>().SetBool("Show", false);
             }
-        }else{
+        }
+        else
+        {
             tangentDefenceText.SetActive(false);
         }
     }
 
-    private bool TanCheck(){
+    private bool TanCheck()
+    {
         float tangent = Mathf.Tan(Time.time / 2f);
-        if(tangent > tangentRequirement){
+        if (tangent > tangentRequirement)
+        {
             return true;
         }
         return false;
     }
 
-    private float CosSpeed(){
-        if(cosineTimeMult == 0f){
+    private float SinPower()
+    {
+        if (!sinMaxed)
+        {
+            sinPowerText.SetActive(false);
+            return 1f;
+        }
+
+        float value = Mathf.Abs(Mathf.Sin(Time.time * statsManager.GetStatFloat("gunOffsetSpeed"))) * 0.5f + 1f;
+        sinPowerText.SetActive(true);
+        sinPowerText.GetComponent<TextMeshProUGUI>().text = "p*=<color=#FF5555>[Abs(Sin(t))*0.5+1]<color=\"white\">(" + value.ToString("F1") + ")";
+        return value;
+    }
+
+    private float CosSpeed()
+    {
+        if (cosineTimeMult == 0f)
+        {
             cosineAspdText.SetActive(false);
             return 1f;
         }
         float value = Mathf.Sin(Time.time) * cosineTimeMult + cosineSpeedMult;
-        if(value <= 0.01){
+        if (value <= 0.01)
+        {
             value = 0;
         }
         cosineAspdText.SetActive(true);
-        cosineAspdText.GetComponent<TextMeshProUGUI>().text = "c=c/<color=#FF5555>[Cos[t]x"+cosineTimeMult+(cosineSpeedMult-1).ToString("+0;-#")+"]<color=\"white\">("+value.ToString("F2")+")";
+        cosineAspdText.GetComponent<TextMeshProUGUI>().text = "c=c/<color=#FF5555>[Cos[t]x" + cosineTimeMult + (cosineSpeedMult - 1).ToString("+0;-#") + "]<color=\"white\">(" + value.ToString("F2") + ")";
         return value;
+    }
+
+    public void NotFiringCalculations()
+    {
+        if (summationFirerateRampMax > 0)
+        {
+            summationFirerateMulti += summationFirerateRampMax * Time.deltaTime / (1.5f + summationFirerateRampMax / 2f);
+            if (summationFirerateMulti > summationFirerateRampMax)
+            {
+                summationFirerateMulti = summationFirerateRampMax;
+            }
+        }
+        else
+        {
+            summationFirerateMulti = 0;
+        }
+    }
+
+    public void FireCalculations()
+    {
+        if (summationMaxed || summationFirerateMulti > 0)
+        {
+            summationFirerateMulti -= summationFirerateReduction;
+            if (summationFirerateMulti < 0)
+            {
+                if (!summationMaxed)
+                {
+                    summationFirerateMulti = 0;
+                }
+                else if (summationFirerateMulti < -1)
+                {
+                    summationFirerateMulti = -1;
+                }
+            }
+        }
+    }
+
+    private void UpdateSummationText()
+    {
+        if (summationFirerateRampMax > 0)
+        {
+            summationText.SetActive(true);
+            summationText.GetComponent<TextMeshProUGUI>().text = "Case[notFiring]{<color=#FF5555>[fBuff<color=\"white\">=" + (100 * summationFirerateRampMax).ToString() + "%x(Δt/" + (1.5f + summationFirerateRampMax / 2).ToString() + ")]}(" + (summationFirerateMulti * 100).ToString("F0") + "%)";
+        }
+        else
+        {
+            summationText.SetActive(false);
+        }
     }
 }

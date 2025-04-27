@@ -24,6 +24,7 @@ public class Enemy : MonoBehaviour
     public float blocksRemaining = 0f;
     public float currentBlockHitpoints = 10f;
     public float blockDefaultSize = 0.25f;
+    public bool isElite = false;
     [Header("UpdateAssistors")]
     public float index = 0f;
     public string movementType = "chase";
@@ -105,14 +106,20 @@ public class Enemy : MonoBehaviour
         canMove = true;
     }
 
-    public void HitByBullet(float damage)
-    {
-        TakeDamage(damage);
-    }
-
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, float percentageDamage = 0f, bool damageElites = false)
     {
         if (dead || !activated) { return; }
+        if (percentageDamage > 0f)
+        {
+            if (isElite && damageElites)
+            {
+                damage += blocksRemaining * hitpointsPerBlock * percentageDamage / 1000f;
+            }
+            else
+            {
+                damage += blocksRemaining * hitpointsPerBlock * percentageDamage / 100f;
+            }
+        }
         float damageOverflow = damage - currentBlockHitpoints;
         currentBlockHitpoints -= damage;
         if (currentBlockHitpoints <= 0)
@@ -204,10 +211,7 @@ public class Enemy : MonoBehaviour
                 {
                     other.GetComponent<PlayerHealth>().TakeDamage(attackDamage);
                 }
-                if (other.GetComponent<Player>().moving)
-                {
-                    TakeDamage(other.GetComponent<PlayerHealth>().defence * other.GetComponent<Player>().velocity);
-                }
+                TakeDamage(other.GetComponent<Player>().GetCollisionDamage());
                 collision = true;
                 StartCoroutine(CollisionCooldown());
             }

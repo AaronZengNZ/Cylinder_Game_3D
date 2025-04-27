@@ -1,8 +1,12 @@
+using System.Numerics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
+using Quaternion = UnityEngine.Quaternion;
 
 public class Player : MonoBehaviour
 {
@@ -16,6 +20,7 @@ public class Player : MonoBehaviour
     public StatsManager statsManager;
     public UpgradeManager upgradeManager;
     public TextMeshProUGUI velocityText;
+    public PlayerHealth playerHealth;
     [Header("Movement")]
     public float speed = 5.0f;
     public bool moving = false;
@@ -37,7 +42,14 @@ public class Player : MonoBehaviour
     float stasisWindup = 0.3f;
     bool hitWall = false;
 
+    [Header("Special Upgrades & References")]
     public float pythagorasLimitationAngles = 0f;
+
+    public GameObject projectile;
+    public float goldenRatioVelocityCorrespondence = 0f;
+    public float goldenRatioPower = 0f;
+    public bool goldenRatioMaxed = false;
+    private float goldenRatioProjectileCd = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +59,7 @@ public class Player : MonoBehaviour
         capsuleCollider = GetComponent<CapsuleCollider>();
         statsManager = GameObject.Find("StatsManager").GetComponent<StatsManager>();
         upgradeManager = GameObject.Find("UpgradeManager").GetComponent<UpgradeManager>();
+        playerHealth = GetComponent<PlayerHealth>();
     }
 
     void Update()
@@ -55,8 +68,46 @@ public class Player : MonoBehaviour
         GetVariables();
         GetUpgrades();
         Movement();
-        Rotate();  
+        Rotate();
         UpdateUI();
+        SpecialUpgrades();
+    }
+
+    private void SpecialUpgrades()
+    {
+        goldenRatioVelocityCorrespondence = upgradeManager.goldenRatioVelocityCorrespondence;
+        goldenRatioPower = upgradeManager.goldenRatioPower;
+        goldenRatioMaxed = upgradeManager.goldenRatioMaxed;
+        GoldenRatio();
+    }
+
+    private void GoldenRatio()
+    {
+        if (goldenRatioVelocityCorrespondence > 0f && velocity > 0f)
+        {
+            goldenRatioProjectileCd += Time.deltaTime;
+            if (goldenRatioProjectileCd > (1 / goldenRatioVelocityCorrespondence / velocity))
+            {
+                float streams = 1f;
+                if(goldenRatioMaxed)
+                {
+                    streams = 2f;
+                }
+                for (int i = 0; i < streams; i++)
+                {
+                    goldenRatioProjectileCd = 0f;
+                    //make the projectiles spawn at the player and shoot in circles
+                    GameObject projectileInstance = Instantiate(projectile, transform.position, Quaternion.identity);
+                    BulletScript bulletScript = projectileInstance.GetComponent<BulletScript>();
+                    projectileInstance.transform.rotation = Quaternion.Euler(0, (360 / streams) * i + Time.time * 90 * goldenRatioVelocityCorrespondence + 180, 0);
+                    projectileInstance.GetComponent<Rigidbody>().velocity = rb.velocity + projectileInstance.transform.forward * (velocity + 5f) * 2f;
+                    bulletScript.speed = velocity * 2f + 5f;
+                    bulletScript.percentageDamage = goldenRatioPower;
+                    bulletScript.damageElites = goldenRatioMaxed;
+                    bulletScript.noControl = true;
+                }
+            }
+        }
     }
 
     private void UpdateUI()
@@ -150,10 +201,26 @@ public class Player : MonoBehaviour
             rb.velocity = Vector3.zero;
         }
     }
-    private void Rotate(){
+
+    public float GetCollisionDamage()
+    {
+        bool tangentMaxed = upgradeManager.tangentMaxed;
+        float defence = playerHealth.defence;
+        if (tangentMaxed && moving == false)
+        {
+            return 5f * defence;
+        }
+        else
+        {
+            return velocity * defence;
+        }
+    }
+
+    private void Rotate()
+    {
         //do not rotate if timescale is 0
-        if(Time.timeScale <= 0.1f){return;}
-        if(movingActive == false){accelerationValue = 1;}
+        if (Time.timeScale <= 0.1f) { return; }
+        if (movingActive == false) { accelerationValue = 1; }
         //point transform at lookpos
         transform.LookAt(new Vector3(mousePosInWorld.x, transform.position.y, mousePosInWorld.z));
         prevYrotation = transform.eulerAngles.y - 180;

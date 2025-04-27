@@ -13,6 +13,7 @@ TagManager:
   - Void
   - Obstacle
   - UpgradeButton
+  - Wall
   layers:
   - Default
   - TransparentFX

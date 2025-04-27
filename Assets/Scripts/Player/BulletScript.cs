@@ -11,6 +11,9 @@ public class BulletScript : MonoBehaviour
     public float yDirection = 0f;
     public float pierce = 1f;
     private float livedTime = 0f;
+    public float percentageDamage = 0f;
+    public bool damageElites = false;
+    public bool noControl = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,10 +43,12 @@ public class BulletScript : MonoBehaviour
     }
 
     private void Movement(){
+        if(noControl){ return; }
         //rotate to change y direction
-        if(yDirection != 0f){
+        if (yDirection != 0f)
+        {
             //set direction to yDirection
-            transform.rotation = Quaternion.Euler(0f, yDirection+180, 0f);
+            transform.rotation = Quaternion.Euler(0f, yDirection + 180, 0f);
         }
         rb.velocity = transform.forward * speed;
     }
@@ -53,15 +58,15 @@ public class BulletScript : MonoBehaviour
         CubeComponent cubeComponent = other.GetComponent<CubeComponent>();
         Enemy enemy = other.GetComponent<Enemy>();
         if(cubeComponent != null){
-            cubeComponent.HitByBullet(damage);
+            cubeComponent.TakeDamage(damage, percentageDamage, damageElites);
             HitEnemy();
         }
         else if(enemy != null){
-            enemy.HitByBullet(damage);
+            enemy.TakeDamage(damage, percentageDamage, damageElites);
             HitEnemy();
         }
         else if(other.tag == "Wall"){
-            HitEnemy();
+            Destroy(gameObject);
         }
     }
 }

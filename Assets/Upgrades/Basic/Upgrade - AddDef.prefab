@@ -114,16 +114,16 @@ MonoBehaviour:
   animator: {fileID: 0}
   selfPrefab: {fileID: 1255820356972299590}
   TitleText: {fileID: 6306126207772207071}
-  title: Additive Defense
+  title: Additive Defence
   titleType: <color=#DDDDDD>Basic</color>
   DescText: {fileID: 6600391162757065840}
   descriptions:
-  - Your defense and armor is increased by a sliver, additively.
-  - Your defense and amor is increased slightly, additively.
-  - Your defense and armor is increased mediocrely, additively.
-  - Your defense and armor is increased largely, additively.
-  - Your defense and armor is increased significantly, additively.
-  - Your defense and armor is increased massively, additively.
+  - Your defence and armor is increased by a sliver, additively.
+  - Your defence and amor is increased slightly, additively.
+  - Your defene and armor is increased mediocrely, additively.
+  - Your defence and armor is increased largely, additively.
+  - Your defence and armor is increased significantly, additively.
+  - Your defence and armor is increased massively, additively.
   FunctionText: {fileID: 9214843971941419220}
   functions:
   - d+=1;
@@ -151,9 +151,9 @@ MonoBehaviour:
   - 25
   - 80
   upgradeType: basic
-  upgradeName: additive_defense
-  upgradeId: add_defense
-  upgradeValue1Type: defense
+  upgradeName: additive_defence
+  upgradeId: add_defence
+  upgradeValue1Type: defence
   upgradeValue1Equation: add
   upgradeValue1:
   - 1
@@ -172,7 +172,7 @@ MonoBehaviour:
   - 60
   - 65
   level: 0
-  maxLevel: 5
+  maxLevel: 6
   currentCost: 1
   upgrading: 0
   specialUpgradeType: none

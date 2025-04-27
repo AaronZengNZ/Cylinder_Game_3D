@@ -394,6 +394,10 @@ MonoBehaviour:
   maxLevel: 5
   currentCost: 1
   upgrading: 0
+  specialUpgradeType: tangent
+  specialUpgradeOnLevel1: 0
+  specialUpgradeOnMaxLevel: 1
+  upgradeCostMultiplier: 1
 --- !u!114 &5896286591669448591
 MonoBehaviour:
   m_ObjectHideFlags: 0

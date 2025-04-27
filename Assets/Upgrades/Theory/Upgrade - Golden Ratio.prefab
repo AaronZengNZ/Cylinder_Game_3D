@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MovementAngle.RoundToInterval(90)
+  m_text: "Case[\u0394t>1/2v]{FireProjectile(count=2,rotation=t&t+180,damage=\"15%\"&\"1.5%\")}"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
@@ -317,7 +317,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Pythagoras' Swiftness - <color=#FFF555>Theory
+  m_text: The Golden Ratio - <color=#FFF555>Theory
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
@@ -451,7 +451,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: More max velocity, but rotations are limited to 90 degrees.
+  m_text: Firerate decreased, you now fire in 2 spirals. Can damage elites.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
@@ -534,7 +534,7 @@ GameObject:
   - component: {fileID: 6842961966612527598}
   - component: {fileID: 8797166664548568121}
   m_Layer: 5
-  m_Name: Upgrade - Pythagoras
+  m_Name: Upgrade - Golden Ratio
   m_TagString: UpgradeButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -634,30 +634,30 @@ MonoBehaviour:
   animator: {fileID: 0}
   selfPrefab: {fileID: 5282318695436617744}
   TitleText: {fileID: 6586851731712690039}
-  title: Pythagoras' Swiftness
+  title: The Golden Ratio
   titleType: <color=#FFF555>Theory</color>
   DescText: {fileID: 492786798924985178}
   descriptions:
-  - More max velocity, but rotations are limited to 90 degrees.
-  - Max velocity and max hitpoints increased.
-  - Max velocity and max hitpoints further increased.
-  - Max velocity and max hitpoints even further increased.
-  - Max hitpoints increased. Rotations limited to 45 degrees.
+  - While moving, fire in a spiral with damage relative to enemy hp.
+  - Increased firerate based on velocity, increased damage.
+  - Increased firerate based on velocity, increased damage.
+  - Increased firerate based on velocity, increased damage.
+  - Firerate decreased, you now fire in 2 spirals. Can damage elites.
   FunctionText: {fileID: 8626703380966514939}
   functions:
-  - MovementAngle.RoundToInterval(90)
-  - player.maxHp += 15
-  - player.maxHp += 30
-  - player.maxHp += 50
-  - player.maxHp += 75
-  functionTransitions: 1
+  - "Case[\u0394t>1/v]{FireProjectile{rotation=t,damage=\"10%\")}"
+  - "Case[\u0394t>1/1.3v]{FireProjectile{rotation=t,damage=\"11.5%\")}"
+  - "Case[\u0394t>1/1.6v]{FireProjectile{rotation=t,damage=\"13%\")}"
+  - "Case[\u0394t>1/2v]{FireProjectile{rotation=t,damage=\"15%\")}"
+  - "Case[\u0394t>1/2v]{FireProjectile(count=2,rotation=t&t+180,damage=\"15%\"&\"1.5%\")}"
+  functionTransitions: 0
   SecondaryFunctionText: {fileID: 6475091965584668009}
   secondaryFunctions:
-  - player.vMax x1.5
-  - player.vMax x1.6
-  - player.vMax x1.7
-  - player.vMax x1.8
-  - MovementAngle.RoundToInterval(45)
+  - Rate=1v, Damage=10%
+  - Rate=1.3v, Damage=11.5%
+  - Rate=1.6v, Damage=13%
+  - Rate=2v, Damage=15%
+  - Amount=2, Rate=1.5v, Damage=15%, EliteDamage=1.5%
   secondaryTransitions: 1
   CostText: {fileID: 2599488139307278286}
   costs:
@@ -667,30 +667,30 @@ MonoBehaviour:
   - 80
   - 200
   upgradeType: theory
-  upgradeName: pythagoras_swiftness
-  upgradeId: pyth_swiftness
-  upgradeValue1Type: player_hitpoints
+  upgradeName: the_golden_ratio
+  upgradeId: golden_ratio
+  upgradeValue1Type: golden_ratio_velocity
   upgradeValue1Equation: add
   upgradeValue1:
-  - 0
-  - 15
-  - 30
-  - 50
-  - 75
-  upgradeValue2Type: player_speed
+  - 1
+  - 1.3
+  - 1.6
+  - 2
+  - 1.5
+  upgradeValue2Type: golden_ratio_power
   upgradeValue2Equation: add
   upgradeValue2:
-  - 0.5
-  - 0.6
-  - 0.7
-  - 0.8
-  - 0.8
+  - 10
+  - 11.5
+  - 13
+  - 15
+  - 15
   level: 0
   maxLevel: 5
   currentCost: 0
   upgrading: 0
-  specialUpgradeType: pythagoras
-  specialUpgradeOnLevel1: 1
+  specialUpgradeType: golden_ratio
+  specialUpgradeOnLevel1: 0
   specialUpgradeOnMaxLevel: 1
   upgradeCostMultiplier: 1
 --- !u!114 &6842961966612527598
@@ -915,7 +915,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Player.vMax x1.2
+  m_text: Amount=2, Rate=1.5v, Damage=15%, EliteDamage=1.5%
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
@@ -1183,7 +1183,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: be221c625cb3d4c0b931751950261e17, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1f8ad1f4279ac4e6a9c445c1c1b8c613, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

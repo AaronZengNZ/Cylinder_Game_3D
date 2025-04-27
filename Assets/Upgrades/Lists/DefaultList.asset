@@ -15,6 +15,9 @@ MonoBehaviour:
   className: default
   specialUpgrades:
   - {fileID: 5282318695436617744, guid: 4ac3695b5f03a4a78b56a83c08d3261e, type: 3}
+  - {fileID: 5282318695436617744, guid: ad7baf1efe8054127ace427681680fa6, type: 3}
+  - {fileID: 5282318695436617744, guid: 4b71cad8083d54526912fe4a95f19822, type: 3}
+  - {fileID: 5282318695436617744, guid: c507d9fae452544018f66db601c0b9a6, type: 3}
   specialUpgradeLevel: 0
   upgrades:
   - {fileID: 8915657044057172598, guid: 26ccacf42913946f19a802bddab22bc2, type: 3}

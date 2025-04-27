@@ -247,7 +247,7 @@ MonoBehaviour:
   - 1.35
   - 1.6
   level: 0
-  maxLevel: 5
+  maxLevel: 6
   currentCost: 1
   upgrading: 0
   specialUpgradeType: none
