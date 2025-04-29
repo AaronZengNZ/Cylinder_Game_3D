@@ -85,7 +85,7 @@ public class GunScript : MonoBehaviour
                 Shoot();
                 upgradeManager.FireCalculations();
             }
-            else if(timeSinceLastFire >= (1f / firerate + Time.deltaTime)){
+            else if(timeSinceLastFire >= (1f / firerate + Time.deltaTime) || timeSinceLastFire >= 1f){
                 upgradeManager.NotFiringCalculations();
             }
         }

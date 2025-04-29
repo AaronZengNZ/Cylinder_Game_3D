@@ -50,6 +50,7 @@ public class UpgradeButton : MonoBehaviour
     public bool specialUpgradeOnMaxLevel = false;
 
     public float upgradeCostMultiplier = 1f;
+    public float upgradePointsSpent = 0f;
     
     void Start(){
         upgradeManager = GameObject.Find("UpgradeManager").GetComponent<UpgradeManager>();

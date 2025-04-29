@@ -21,12 +21,15 @@ public class Player : MonoBehaviour
     public UpgradeManager upgradeManager;
     public TextMeshProUGUI velocityText;
     public PlayerHealth playerHealth;
+    public GameEnd gameEnd;
+    public GameObject deathParticles;
     [Header("Movement")]
     public float speed = 5.0f;
     public bool moving = false;
     public bool movingActive = false;
     public Vector3 mousePosInWorld;
     [Header("Cylinder")]
+    public bool dead = false;
     public GameObject cylinder;
     public Vector3 cylinderRotationalOffset;
     public CapsuleCollider capsuleCollider;
@@ -50,7 +53,6 @@ public class Player : MonoBehaviour
     public float goldenRatioPower = 0f;
     public bool goldenRatioMaxed = false;
     private float goldenRatioProjectileCd = 0f;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -60,10 +62,16 @@ public class Player : MonoBehaviour
         statsManager = GameObject.Find("StatsManager").GetComponent<StatsManager>();
         upgradeManager = GameObject.Find("UpgradeManager").GetComponent<UpgradeManager>();
         playerHealth = GetComponent<PlayerHealth>();
+        gameEnd = GameObject.Find("GameEnd").GetComponent<GameEnd>();
     }
 
     void Update()
     {
+        if (dead)
+        {
+            rb.velocity = Vector3.zero;
+            return;
+        }
         CheckForToggleMovement();
         GetVariables();
         GetUpgrades();
@@ -71,6 +79,16 @@ public class Player : MonoBehaviour
         Rotate();
         UpdateUI();
         SpecialUpgrades();
+    }
+
+    public void SpawnDeathParticles()
+    {
+        GameObject deathParticlesInstance = Instantiate(deathParticles, transform.position, Quaternion.identity);
+    }
+
+    public void GameOverScreen()
+    {
+        gameEnd.GameOver();
     }
 
     private void SpecialUpgrades()

@@ -72,7 +72,6 @@ public class UpgradeButtonManager : MonoBehaviour
             }
             if (upgradeTarget.upgradeType == "special")
             {
-                upgradeListHolder.AddSpecialUpgradeToList(upgradeTarget.selfPrefab);
                 upgradeListHolder.SpecialUpgradeLevelUp(upgradeTarget.selfPrefab);
             }
             else
@@ -150,19 +149,32 @@ public class UpgradeButtonManager : MonoBehaviour
                 upgradeButtons[i].gameObject.SetActive(true);
             }
             currentUpgradeType = savedUpgradeType;
-        }
-        else
-        {
-            UnityEngine.Debug.Log("Instantiating " + type + " upgrades");
-            GameObject[] newUpgrades = upgradeListHolder.GetRandomUpgrades(type, upgradesToInstantiate);
-            for (int i = 0; i < newUpgrades.Length; i++)
+
+            if (savedUpgradeButtons.Length <= 2)
             {
-                GameObject newUpgrade = Instantiate(newUpgrades[i], upgradeParent.transform);
-                UpgradeButton newUpgradeButton = newUpgrade.GetComponent<UpgradeButton>();
-                newUpgradeButton.level = upgradeListHolder.GetLevelOfUpgrade(newUpgradeButton.upgradeType, newUpgrades[i]);
-                newUpgradeButton.UpdateCost(levelManager.GetMultiplier());
+                GameObject[] newUpgrades = upgradeListHolder.GetRandomUpgrades("basic", 3 - savedUpgradeButtons.Length);
+                for (int i = 0; i < newUpgrades.Length; i++)
+                {
+                    GameObject newUpgrade = Instantiate(newUpgrades[i], upgradeParent.transform);
+                    UpgradeButton newUpgradeButton = newUpgrade.GetComponent<UpgradeButton>();
+                    newUpgradeButton.level = upgradeListHolder.GetLevelOfUpgrade(newUpgradeButton.upgradeType, newUpgrades[i]);
+                    newUpgradeButton.UpdateCost(levelManager.GetMultiplier());
+                }
             }
+            
         }
+            else
+            {
+                UnityEngine.Debug.Log("Instantiating " + type + " upgrades");
+                GameObject[] newUpgrades = upgradeListHolder.GetRandomUpgrades(type, upgradesToInstantiate);
+                for (int i = 0; i < newUpgrades.Length; i++)
+                {
+                    GameObject newUpgrade = Instantiate(newUpgrades[i], upgradeParent.transform);
+                    UpgradeButton newUpgradeButton = newUpgrade.GetComponent<UpgradeButton>();
+                    newUpgradeButton.level = upgradeListHolder.GetLevelOfUpgrade(newUpgradeButton.upgradeType, newUpgrades[i]);
+                    newUpgradeButton.UpdateCost(levelManager.GetMultiplier());
+                }
+            }
         rerolling = false;
     }
 

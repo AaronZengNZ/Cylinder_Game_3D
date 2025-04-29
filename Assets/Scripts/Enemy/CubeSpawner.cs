@@ -52,6 +52,8 @@ public class CubeSpawner : MonoBehaviour
     public TextMeshProUGUI hitpointsText;
     public TextMeshProUGUI damageText;
     public TextMeshProUGUI xpMultiText;
+
+    public float segmentsDestroyed = 0f;
     // Start is called before the first frame update
     void Start()
     {

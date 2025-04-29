@@ -14,6 +14,8 @@ public class UpgradeListHolder : MonoBehaviour
     public float[] upgradeLevels;
 
     public float uniqueUpgradesGot = 0f;
+
+    public LevelManager levelManager;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +24,7 @@ public class UpgradeListHolder : MonoBehaviour
         SelectClass("trigonometry");
         SelectedClassSpecials();
         //AddNewUpgradesToList(selectedClass);
+        levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
     }
 
     public void UpgradeLevelUp(GameObject upgrade)
@@ -60,34 +63,87 @@ public class UpgradeListHolder : MonoBehaviour
         }
 
         int index = System.Array.IndexOf(upgrades, upgradeInArray);
+
+        upgradeInArray.GetComponent<UpgradeButton>().level = (int)upgradeLevels[index];
+        upgradeInArray.GetComponent<UpgradeButton>().UpdateCost(levelManager.GetMultiplier());
+        upgradeInArray.GetComponent<UpgradeButton>().upgradePointsSpent += upgradeInArray.GetComponent<UpgradeButton>().currentCost;
+
         UnityEngine.Debug.Log("index = " + index);
         upgradeLevels[index]++;
+    }
+
+    public float GetLevelOfUpgrade(GameObject upgrade)
+    {
+        int index = System.Array.IndexOf(upgrades, upgrade);
+        if (index > upgradeLevels.Length - 1 || index < 0)
+        {
+            UnityEngine.Debug.Log("Index out of bounds");
+            return 0f;
+        }
+        return upgradeLevels[index];
     }
 
     private void BaseListSetUpgrades()
     {
         upgrades = baseList.upgrades;
         upgradeLevels = baseList.upgradeLevels;
+        foreach (GameObject upgrade in upgrades)
+        {
+            upgrade.GetComponent<UpgradeButton>().level = 0;
+            upgrade.GetComponent<UpgradeButton>().upgradeCostMultiplier = 1f;
+            upgrade.GetComponent<UpgradeButton>().upgradePointsSpent = 0f;
+        }
     }
 
     public void SpecialUpgradeLevelUp(GameObject upgrade)
     {
+        GameObject upgradeInArray = null;
+        foreach (GameObject upgradeInList in upgrades)
+        {
+            UpgradeButton upgradeButton = upgradeInList.GetComponent<UpgradeButton>();
+            UpgradeButton upgradeButtonUpgrade = upgrade.GetComponent<UpgradeButton>();
+            if (upgradeButton.upgradeName == upgradeButtonUpgrade.upgradeName)
+            {
+                upgradeInArray = upgradeInList;
+            }
+        }
+
+        if (upgradeInArray == null)
+        {
+            upgradeInArray = AddSpecialUpgradeToList(upgrade);
+        }
+
         int index = System.Array.IndexOf(upgrades, upgrade);
+        upgradeInArray.GetComponent<UpgradeButton>().level = (int)specialUpgradeLevel;
+        upgradeInArray.GetComponent<UpgradeButton>().UpdateCost(levelManager.GetMultiplier());
+        upgradeInArray.GetComponent<UpgradeButton>().upgradePointsSpent += upgradeInArray.GetComponent<UpgradeButton>().currentCost;
         specialUpgradeLevel++;
     }
 
     private void BaseListUniques()
     {
         uniqueUpgrades = baseList.specialUpgrades;
+        foreach(GameObject upgrade in uniqueUpgrades)
+        {
+            upgrade.GetComponent<UpgradeButton>().level = 0;
+            upgrade.GetComponent<UpgradeButton>().upgradeCostMultiplier = 1f;
+            upgrade.GetComponent<UpgradeButton>().upgradePointsSpent = 0f;
+        }
     }
 
     private void SelectedClassSpecials()
     {
         specialUpgrades = selectedClass.specialUpgrades;
         specialUpgradeLevel = selectedClass.specialUpgradeLevel;
+        foreach (GameObject upgrade in specialUpgrades)
+        {
+            upgrade.GetComponent<UpgradeButton>().level = 0;
+            upgrade.GetComponent<UpgradeButton>().upgradeCostMultiplier = 1f;
+            upgrade.GetComponent<UpgradeButton>().upgradePointsSpent = 0f;
+        }
     }
 
-    public void AddSpecialUpgradeToList(GameObject upgrade)
+    public GameObject AddSpecialUpgradeToList(GameObject upgrade)
     {
         GameObject upgradeInSpecialUpgradeArray = null;
         foreach (GameObject specialUpgrade in specialUpgrades)
@@ -118,6 +174,8 @@ public class UpgradeListHolder : MonoBehaviour
         tempUpgradeLevels[upgradeLevels.Length] = 0f;
         upgrades = tempUpgrades;
         upgradeLevels = tempUpgradeLevels;
+
+        return upgradeInSpecialUpgradeArray;
     }
 
     public void AddUniqueUpgradeToList(GameObject upgrade)

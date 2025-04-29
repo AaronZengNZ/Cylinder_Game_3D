@@ -36,6 +36,7 @@ public class CubeComponent : MonoBehaviour
 
     private void Die(){
         InstantiateParticle();
+        GameObject.Find("CubeSpawner").GetComponent<CubeSpawner>().segmentsDestroyed++;
         Instantiate(deathParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }

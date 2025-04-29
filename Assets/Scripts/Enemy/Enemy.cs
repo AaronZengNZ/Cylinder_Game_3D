@@ -125,6 +125,7 @@ public class Enemy : MonoBehaviour
         if (currentBlockHitpoints <= 0)
         {
             blocksRemaining--;
+            GameObject.Find("CubeSpawner").GetComponent<CubeSpawner>().segmentsDestroyed++;
             if (blocksRemaining <= 0)
             {
                 dead = true;

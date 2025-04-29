@@ -693,6 +693,7 @@ MonoBehaviour:
   specialUpgradeOnLevel1: 1
   specialUpgradeOnMaxLevel: 1
   upgradeCostMultiplier: 1
+  upgradePointsSpent: 0
 --- !u!114 &6842961966612527598
 MonoBehaviour:
   m_ObjectHideFlags: 0

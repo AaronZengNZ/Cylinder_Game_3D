@@ -687,12 +687,13 @@ MonoBehaviour:
   - 0.8
   level: 0
   maxLevel: 5
-  currentCost: 0
+  currentCost: 195700
   upgrading: 0
   specialUpgradeType: pythagoras
   specialUpgradeOnLevel1: 1
   specialUpgradeOnMaxLevel: 1
   upgradeCostMultiplier: 1
+  upgradePointsSpent: 0
 --- !u!114 &6842961966612527598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1049,7 +1050,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Cost: 0 UP'
+  m_text: 'Cost: 195700 UP'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}
   m_sharedMaterial: {fileID: 5317167111626990646, guid: 0dd8bbcccde5a44b5b07e4e3d94b838c, type: 2}

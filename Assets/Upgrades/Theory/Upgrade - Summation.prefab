@@ -685,7 +685,7 @@ MonoBehaviour:
   - 3
   - 4
   - 5
-  level: 0
+  level: 2
   maxLevel: 5
   currentCost: 0
   upgrading: 0
@@ -693,6 +693,7 @@ MonoBehaviour:
   specialUpgradeOnLevel1: 0
   specialUpgradeOnMaxLevel: 1
   upgradeCostMultiplier: 1
+  upgradePointsSpent: 0
 --- !u!114 &6842961966612527598
 MonoBehaviour:
   m_ObjectHideFlags: 0

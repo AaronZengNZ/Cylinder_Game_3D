@@ -11,6 +11,7 @@ public class PlayerHealth : MonoBehaviour
     public float armor = 0f;
     public float regeneration = 2f;
     public StatsManager statsManager;
+    public Player player;
     [SerializeField] private float hitpoints = 100f;
 
     //references
@@ -20,11 +21,13 @@ public class PlayerHealth : MonoBehaviour
     public TextMeshProUGUI defenceText;
     public TextMeshProUGUI armorText;
 
+    public bool dead = false;
     // Start is called before the first frame update
     void Start()
     {
         hitpoints = maxHitpoints;
         StartCoroutine(RegenerationTimer());
+        player = GetComponent<Player>();
     }
 
     void Update()
@@ -45,6 +48,7 @@ public class PlayerHealth : MonoBehaviour
     }
 
     public void TakeDamage(float amount){
+        if(dead){ hitpoints = 0; return; }
         float armorMulti = (1 - armor / 100);
         if(armorMulti < 0.1f){
             armorMulti = 0.1f;
@@ -58,6 +62,7 @@ public class PlayerHealth : MonoBehaviour
             trueDamage *= armorMulti;
             hitpoints -= trueDamage;
             if(hitpoints <= 0){
+                hitpoints = 0;
                 Die();
             }
         }
@@ -73,7 +78,11 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
+        if(dead){ return; }
         //die
+        player.dead = true;
+        dead = true;
+        player.anim.SetBool("Dead", true);
     }
 
     IEnumerator RegenerationTimer(){
@@ -84,6 +93,7 @@ public class PlayerHealth : MonoBehaviour
     }
 
     public void Regenerate(float amount){
+        if(dead){ return; }
         hitpoints += amount;
         if(hitpoints > maxHitpoints){
             hitpoints = maxHitpoints;
